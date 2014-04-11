@@ -2,7 +2,7 @@
 
 # announce the override action since this is just a plain include
 my_local_override_msg="Overriden by ${my_ctl_federation}"
-echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired"
+echo "Overriding functions: configTomcatSSLServerKey, installCertificates, configShibbolethFederationValidationKey, performStepsForShibbolethUpgradeIfRequired, displayMainMenu"
 
 configTomcatSSLServerKey() {
 	echo -e "${my_local_override_msg}"
@@ -144,3 +144,10 @@ performStepsForShibbolethUpgradeIfRequired () {
 
 }
 
+
+displayMainMenu() {
+	echo -e "${my_local_override_msg}"
+
+	invokeShibbolethInstallProcess
+	mainMenuExitFlag=1
+}
