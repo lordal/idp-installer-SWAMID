@@ -96,7 +96,7 @@ SAML2 Uses:
 	  tomcat6                                                        
       shibboleth-identityprovider-2.4.0                                    
       cas-client-3.2.1-release                                             
-      mysql-connector-java-5.1.27 (for EPTID)                              
+      mysql-connector-java-5.1.32 (for EPTID)                              
       apache-maven-3.1.1 (for building FTICKS plugin) 
 
 
