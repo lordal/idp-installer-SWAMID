@@ -92,18 +92,31 @@ Please see: ~/docs/README.<federation_name> for federation specifics on post ins
 
 Profile of installed software 
 -------------------------------------------------------------------------------
-SAML2 Uses: 
-	  tomcat6                                                        
-      shibboleth-identityprovider-2.4.0                                    
-      cas-client-3.2.1-release                                             
-      mysql-connector-java-5.1.32 (for EPTID)                              
-      apache-maven-3.1.1 (for building FTICKS plugin) 
+SAML2 Uses:
+      tomcat6
+      shibboleth-identityprovider-2.4.4
+      cas-client-3.2.1-release
+      mysql-connector-java-5.1.35 (for EPTID)
 
 
 
-eduroam uses:																 
-      freeRADIUS-2.1.12                                                    
-      samba-3.6.9 (to connect to AD for MS-CHAPv2)                         
+eduroam uses:
+      freeRADIUS-2.1.12
+      samba-3.6.9 (to connect to AD for MS-CHAPv2)
+
+
+Running with backup
+-------------------------------------------------------------------------------
+ If you have a running IDP you can use the script idp_backup.sh to create
+ a tar file that contains  certificates, passwords, metadata, EPTID database (if present)
+ and FTICKS key from the IDP.
+ Move this file to the new host and place it in the installer directory along
+ with the original config file.
+ Run the installer and it will pick up all settings from the tar file.
+
+ Please note that you will have to redo all custom config.
+ Changes to attribute filter, attribute resolver, relying party or login page
+ will not be transfered.
 
 
 Disclamer
@@ -120,7 +133,7 @@ Disclamer
  GNU General Public License for more details.
 
  You should have received a copy of the GNU General Public License
-along with this software. If not, see <http://www.gnu.org/licenses/>.
+ along with this software. If not, see <http://www.gnu.org/licenses/>.
 
 
 Contributors

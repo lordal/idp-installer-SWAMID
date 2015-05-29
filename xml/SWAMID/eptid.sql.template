@@ -21,3 +21,4 @@ CREATE TABLE IF NOT EXISTS shibpid (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 grant ALL ON shibboleth.shibpid to 'shibboleth'@'localhost' IDENTIFIED BY 'SqLpAsSwOrD';
+FLUSH PRIVILEGES;

@@ -254,7 +254,16 @@ doInstall() {
 }
 
 displayMainMenu() {
-
+	if [ ${silent} -eq 1 ]; then
+		if echo "${installer_section0_buildComponentList}" | grep -q "eduroam shibboleth"; then
+			eduroamTask="installAll"
+		elif echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
+			eduroamTask="installFedSSO"
+		elif echo "${installer_section0_buildComponentList}" | grep -q "eduroam"; then
+			eduroamTask="installEduroam"
+		fi
+		mainMenuExitFlag=1
+	else
                 if [ "${GUIen}" = "y" ]
                 then
  		#	${whiptailBin} --backtitle "${GUIbacktitle}" --title "Review and Confirm Install Settings" --scrolltext --clear --defaultno --yesno --textbox ${freeradiusfile} 20 75 3>&1 1>&2 2>&3
@@ -268,6 +277,7 @@ displayMainMenu() {
                         read eduroamTask
                         echo ""
                 fi
+	fi
 
 		if [ "${eduroamTask}" = "review" ]
 		then

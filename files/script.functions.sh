@@ -339,23 +339,26 @@ setHostnames() {
 
 
 fetchCas() {
-	${Echo} "Cas-client not found, fetching from web"
-	${fetchCmd} ${downloadPath}/cas-client-${casVer}-release.zip ${casClientURL}
-
 	if [ ! -s ${downloadPath}/cas-client-${casVer}-release.zip ]; then
-		${Echo} "Error while downloading CAS client, aborting."
-		cleanBadInstall
+		${Echo} "Cas-client not found, fetching from web"
+		${fetchCmd} ${downloadPath}/cas-client-${casVer}-release.zip ${casClientURL}
+		if [ ! -s ${downloadPath}/cas-client-${casVer}-release.zip ]; then
+			${Echo} "Error while downloading CAS client, aborting."
+			cleanBadInstall
+		fi
 	fi
 }
 
 fetchMysqlCon() {
+	echo "Mysql Connector now in the download folder"
 
-	${fetchCmd} ${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz ${mysqlConnectorURL}
-	
-	if [ ! -s "${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz" ]; then
-		${Echo} "Error while downloading mysql-connector, aborting."
-		cleanBadInstall
-	fi
+# 	if [ ! -s "${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz" ]; then
+# 		${fetchCmd} ${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz ${mysqlConnectorURL}
+# 		if [ ! -s "${downloadPath}/mysql-connector-java-${mysqlConVer}.tar.gz" ]; then
+# 			${Echo} "Error while downloading mysql-connector, aborting."
+# 			cleanBadInstall
+# 		fi
+# 	fi
 }
 
 
@@ -364,37 +367,39 @@ installFticksIfEnabled() {
 
 if [ "${fticks}" != "n" ]; then
 
-		eval ${distCmd2} >> ${statusFile} 2>&1
-		Cres=$?
-		if [ $Cres -gt 0 ]; then
-			${Echo} "Command failed: ${distCmd2}"
-			cleanBadInstall
-		fi
-		if [ ! -s "`which mvn 2>/dev/null`" ]; then
-			installMavenRC
-		fi
-
-		if [ ! -s "`which mvn 2>/dev/null`" ]; then
-			${Echo} "Maven2 not found! Install Maven2 and re-run this script."
-			cleanBadInstall
-		fi
-
-
-	${Echo} "Installing ndn-shib-fticks"
-	eval ${distCmd2} >> ${statusFile} 2>&1
-	if [ ! -x "`which mvn 2>/dev/null`" ]; then
-		continueF=$(askYesNo "Maven2" "Make sure Maven2 is installed?\nContinue?" "no")
-
-		if [ "${continueF}" = "n" ]; then
-			cleanBadInstall
-		fi
-	fi
-
-	cd /opt
-	git clone git://github.com/leifj/ndn-shib-fticks.git >> ${statusFile} 2>&1
-	cd ndn-shib-fticks
-	mvn >> ${statusFile} 2>&1
-	cp /opt/ndn-shib-fticks/target/*.jar /opt/shibboleth-identityprovider/lib
+	echo "ndn-shib-fticks now in the download folder"
+# 	eval ${distCmd2} >> ${statusFile} 2>&1
+# 	Cres=$?
+# 	if [ $Cres -gt 0 ]; then
+# 		${Echo} "Command failed: ${distCmd2}"
+# 		cleanBadInstall
+# 	fi
+# 	if [ ! -s "`which mvn 2>/dev/null`" ]; then
+# 		installMavenRC
+# 	fi
+# 
+# 	if [ ! -s "`which mvn 2>/dev/null`" ]; then
+# 		${Echo} "Maven2 not found! Install Maven2 and re-run this script."
+# 		cleanBadInstall
+# 	fi
+# 
+# 
+# 	${Echo} "Installing ndn-shib-fticks"
+# 	eval ${distCmd2} >> ${statusFile} 2>&1
+# 	if [ ! -x "`which mvn 2>/dev/null`" ]; then
+# 		continueF=$(askYesNo "Maven2" "Make sure Maven2 is installed?\nContinue?" "no")
+# 
+# 		if [ "${continueF}" = "n" ]; then
+# 			cleanBadInstall
+# 		fi
+# 	fi
+# 
+# 	cd /opt
+# 	git clone git://github.com/leifj/ndn-shib-fticks.git >> ${statusFile} 2>&1
+# 	cd ndn-shib-fticks
+# 	mvn >> ${statusFile} 2>&1
+# 	cp /opt/ndn-shib-fticks/target/*.jar /opt/shibboleth-identityprovider/lib
+	cp ${downloadPath}/ndn-shib-fticks-0.0.1-SNAPSHOT.jar /opt/shibboleth-identityprovider/lib
 
 else
 	${Echo} "NOT Installing ndn-shib-fticks"
@@ -474,9 +479,8 @@ installCasClientIfEnabled() {
 
 if [ "${type}" = "cas" ]; then
 
-	if [ ! -f "${downloadPath}/cas-client-${casVer}-release.zip" ]; then
-		fetchCas
-	fi
+	fetchCas
+
 	unzip -q ${downloadPath}/cas-client-${casVer}-release.zip -d /opt
 	if [ ! -s "/opt/cas-client-${casVer}/modules/cas-client-core-${casVer}.jar" ]; then
 		${Echo} "Unzip of cas-client failed, check zip file: ${downloadPath}/cas-client-${casVer}-release.zip"
@@ -576,9 +580,9 @@ installCertificates()
 
 {
 
-# change to certificate path whilst doing this part
-cd ${certpath}
-${Echo} "Fetching TCS CA chain from web"
+	# change to certificate path whilst doing this part
+	cd ${certpath}
+	${Echo} "Fetching TCS CA chain from web"
 	${fetchCmd} ${certpath}/server.chain ${certificateChain}
 	if [ ! -s "${certpath}/server.chain" ]; then
 		${Echo} "Can not get the certificate chain, aborting install."
@@ -587,7 +591,7 @@ ${Echo} "Fetching TCS CA chain from web"
 
 	${Echo} "Installing TCS CA chain in java cacert keystore"
 	cnt=1
-	for i in `cat ${certpath}server.chain | sed -re 's/\ /\*\*\*/g'`; do
+	for i in `cat ${certpath}/server.chain | sed -re 's/\ /\*\*\*/g'`; do
 		n=`${Echo} ${i} | sed -re 's/\*\*\*/\ /g'`
 		${Echo} ${n} >> ${certpath}${cnt}.root
 		ltest=`${Echo} ${n} | grep "END CERTIFICATE"`
@@ -610,122 +614,128 @@ ${Echo} "Fetching TCS CA chain from web"
 }
 
 askForConfigurationData() {
-	if [ -z "${type}" ]; then
-		tList=""
-		tAccept=""
-		tGo=0
-		for i in `ls ${Spath}/prep | sed -re 's/\n/\ /g'`; do
-			tDesc=`cat ${Spath}/prep/${i}/.desc`
-			tList="`${Echo} ${tList}` \"${i}\" \"${tDesc}\""
-			tAccept=`${Echo} ${tAccept} ${i}`
-		done
-
-		while [ ${tGo} -eq 0 ]; do
-			type=$(askList "Authentication type" "Which authentication type do you want to use?" "${tList}")
-			for i in ${tAccept}; do
-				if [ "${i}" = "${type}" ]; then
-					tGo=1
-					break
-				fi
+	if [ "${silent}" -eq 0 ]; then
+		if [ -z "${type}" ]; then
+			tList=""
+			tAccept=""
+			tGo=0
+			for i in `ls ${Spath}/prep | sed -re 's/\n/\ /g'`; do
+				tDesc=`cat ${Spath}/prep/${i}/.desc`
+				tList="`${Echo} ${tList}` \"${i}\" \"${tDesc}\""
+				tAccept=`${Echo} ${tAccept} ${i}`
 			done
-		done
-	fi
-	prep="prep/${type}"
 
-	if [ -z "${google}" ]; then
-		google=$(askYesNo "Attributes to Google" "Do you want to release attributes to google?\nSwamid, Swamid-test and testshib.org installed as standard" "no")
-	fi
-
-	if [ "${google}" != "n" -a -z "${googleDom}" ]; then
-		googleDom=$(askString "Your Google domain name" "Please input your Google domain name (student.xxx.yy)." "student.${Dname}")
-	fi
-
-	if [ -z "${ntpserver}" ]; then
-		ntpserver=$(askString "NTP server" "Please input your NTP server address." "ntp.${Dname}")
-	fi
-
-	if [ -z "${ldapserver}" ]; then
-		ldapserver=$(askString "LDAP server" "Please input yout LDAP server(s) (ldap.xxx.yy).\n\nSeparate multiple servers with spaces.\nLDAPS is used by default." "ldap.${Dname}")
-	fi
-
-	if [ -z "${ldapbasedn}" ]; then
-		ldapbasedn=$(askString "LDAP Base DN" "Please input your LDAP Base DN")
-	fi
-
-	if [ -z "${ldapbinddn}" ]; then
-		ldapbinddn=$(askString "LDAP Bind DN" "Please input your LDAP Bind DN")
-	fi
-
-	if [ -z "${ldappass}" ]; then
-		ldappass=$(askString "LDAP Password" "Please input your LDAP Password")
-	fi
-
-	if [ "${type}" = "ldap" -a -z "${subsearch}" ]; then
-		subsearch=$(askYesNo "LDAP Subsearch" "Do you want to enable LDAP subtree search?")
-		subsearch="false"
-		if [ "${subsearchNum}" = "y" ]; then
-			subsearch="true"
+			while [ ${tGo} -eq 0 ]; do
+				type=$(askList "Authentication type" "Which authentication type do you want to use?" "${tList}")
+				for i in ${tAccept}; do
+					if [ "${i}" = "${type}" ]; then
+						tGo=1
+						break
+					fi
+				done
+			done
 		fi
-	fi
+		prep="prep/${type}"
 
-	if [ -z "${ninc}" ]; then
-		ninc=$(askString "norEduPersonNIN" "Please specify LDAP attribute for norEduPersonNIN (YYYYMMDDnnnn)" "norEduPersonNIN")
-	fi
-
-	if [ -z "${idpurl}" ]; then
-		idpurl=$(askString "IDP URL" "Please input the URL to this IDP (https://idp.xxx.yy)" "https://${FQDN}")
-	fi
-
-	if [ "${type}" = "cas" ]; then
-		if [ -z "${casurl}" ]; then
-			casurl=$(askString "CAS URL" "Please input the URL to yourCAS server (https://cas.xxx.yy/cas)" "https://cas.${Dname}/cas")
+		if [ -z "${google}" ]; then
+			google=$(askYesNo "Attributes to Google" "Do you want to release attributes to google?\nSwamid, Swamid-test and testshib.org installed as standard" "no")
 		fi
 
-		if [ -z "${caslogurl}" ]; then
-			caslogurl=$(askString "CAS login URL" "Please input the Login URL to your CAS server (https://cas.xxx.yy/cas/login)" "${casurl}/login")
+		if [ "${google}" != "n" -a -z "${googleDom}" ]; then
+			googleDom=$(askString "Your Google domain name" "Please input your Google domain name (student.xxx.yy)." "student.${Dname}")
+		fi
+
+		if [ -z "${ntpserver}" ]; then
+			ntpserver=$(askString "NTP server" "Please input your NTP server address." "ntp.${Dname}")
+		fi
+
+		if [ -z "${ldapserver}" ]; then
+			ldapserver=$(askString "LDAP server" "Please input yout LDAP server(s) (ldap.xxx.yy).\n\nSeparate multiple servers with spaces.\nLDAPS is used by default." "ldap.${Dname}")
+		fi
+
+		if [ -z "${ldapbasedn}" ]; then
+			ldapbasedn=$(askString "LDAP Base DN" "Please input your LDAP Base DN")
+		fi
+
+		if [ -z "${ldapbinddn}" ]; then
+			ldapbinddn=$(askString "LDAP Bind DN" "Please input your LDAP Bind DN")
+		fi
+
+		if [ -z "${ldappass}" ]; then
+			ldappass=$(askString "LDAP Password" "Please input your LDAP Password")
+		fi
+
+		if [ "${type}" = "ldap" -a -z "${subsearch}" ]; then
+			subsearch=$(askYesNo "LDAP Subsearch" "Do you want to enable LDAP subtree search?")
+			subsearch="false"
+			if [ "${subsearchNum}" = "y" ]; then
+				subsearch="true"
+			fi
+		fi
+
+		if [ -z "${ninc}" ]; then
+			ninc=$(askString "norEduPersonNIN" "Please specify LDAP attribute for norEduPersonNIN (YYYYMMDDnnnn)" "norEduPersonNIN")
+		fi
+
+		if [ -z "${idpurl}" ]; then
+			idpurl=$(askString "IDP URL" "Please input the URL to this IDP (https://idp.xxx.yy)" "https://${FQDN}")
+		fi
+
+		if [ "${type}" = "cas" ]; then
+			if [ -z "${casurl}" ]; then
+				casurl=$(askString "CAS URL" "Please input the URL to yourCAS server (https://cas.xxx.yy/cas)" "https://cas.${Dname}/cas")
+			fi
+
+			if [ -z "${caslogurl}" ]; then
+				caslogurl=$(askString "CAS login URL" "Please input the Login URL to your CAS server (https://cas.xxx.yy/cas/login)" "${casurl}/login")
+			fi
+		fi
+
+		if [ -z "${certOrg}" ]; then
+			certOrg=$(askString "Certificate organisation" "Please input organisation name string for certificate request")
+		fi
+
+		if [ -z "${certC}" ]; then
+			certC=$(askString "Certificate country" "Please input country string for certificate request" "SE")
+		fi
+
+		if [ -z "${certAcro}" ]; then
+			acro=""
+			for i in ${certOrg}; do
+				t=`${Echo} ${i} | cut -c1`
+				acro="${acro}${t}"
+			done
+
+			certAcro=$(askString "Organisation acronym" "Please input organisation Acronym (eg. 'HiG')" "${acro}")
+		fi
+
+		if [ -z "${certLongC}" ]; then
+			certLongC=$(askString "Country descriptor" "Please input country descriptor (eg. 'Sweden')" "Sweden")
+		fi
+
+		if [ -z "${fticks}" ]; then
+			fticks=$(askYesNo "Send anonymous data" "Do you want to send anonymous usage data to ${my_ctl_federation}?\nThis is recommended")
+		fi
+
+		if [ -z "${eptid}" ]; then
+			eptid=$(askYesNo "eduPersonTargetedID" "Do you want to install support for eduPersonTargetedID?\nThis is recommended")
+		fi
+
+		if [ "${eptid}" != "n" ]; then
+			mysqlPass=$(askString "MySQL password" "MySQL is used for supporting the eduPersonTargetedId attribute.\n\n Please set the root password for MySQL.\nAn empty string generates a randomized new password" "" 1)
+		fi
+
+		if [ -z "${selfsigned}" ]; then
+			selfsigned=$(askYesNo "Self signed certificate" "Create a self signed certificate for HTTPS?\n\nThis is NOT recommended for production systems! Only for testing purposes" "y")
+		fi
+
+		if [ -z "${pass}" ]; then
+			pass=$(askString "IDP keystore password" "The IDP keystore is for the Shibboleth software itself and not the webserver. Please set your IDP keystore password.\nAn empty string generates a randomized new password" "" 1)
+		fi
+		if [ -z "${httpspass}" ]; then
+			httpspass=$(askString "HTTPS Keystore password" "The webserver uses a separate keystore for itself. Please input your Keystore password for the end user facing HTTPS.\n\nAn empty string generates a randomized new password" "" 1)
 		fi
 	fi
-
-	if [ -z "${certOrg}" ]; then
-		certOrg=$(askString "Certificate organisation" "Please input organisation name string for certificate request")
-	fi
-
-	if [ -z "${certC}" ]; then
-		certC=$(askString "Certificate country" "Please input country string for certificate request" "SE")
-	fi
-
-	if [ -z "${certAcro}" ]; then
-		acro=""
-		for i in ${certOrg}; do
-			t=`${Echo} ${i} | cut -c1`
-			acro="${acro}${t}"
-		done
-
-		certAcro=$(askString "Organisation acronym" "Please input organisation Acronym (eg. 'HiG')" "${acro}")
-	fi
-
-	if [ -z "${certLongC}" ]; then
-		certLongC=$(askString "Country descriptor" "Please input country descriptor (eg. 'Sweden')" "Sweden")
-	fi
-
-	if [ -z "${fticks}" ]; then
-		fticks=$(askYesNo "Send anonymous data" "Do you want to send anonymous usage data to ${my_ctl_federation}?\nThis is recommended")
-	fi
-
-	if [ -z "${eptid}" ]; then
-		eptid=$(askYesNo "eduPersonTargetedID" "Do you want to install support for eduPersonTargetedID?\nThis is recommended")
-	fi
-
-	if [ "${eptid}" != "n" ]; then
-		mysqlPass=$(askString "MySQL password" "MySQL is used for supporting the eduPersonTargetedId attribute.\n\n Please set the root password for MySQL.\nAn empty string generates a randomized new password" "" 1)
-	fi
-
-	if [ -z "${selfsigned}" ]; then
-		selfsigned=$(askYesNo "Self signed certificate" "Create a self signed certificate for HTTPS?\n\nThis is NOT recommended for production systems! Only for testing purposes" "y")
-	fi
-
-	pass=$(askString "IDP keystore password" "The IDP keystore is for the Shibboleth software itself and not the webserver. Please set your IDP keystore password.\nAn empty string generates a randomized new password" "" 1)
-	httpspass=$(askString "HTTPS Keystore password" "The webserver uses a separate keystore for itself. Please input your Keystore password for the end user facing HTTPS.\n\nAn empty string generates a randomized new password" "" 1)
 }
 
 setDistCommands() {
@@ -1036,26 +1046,13 @@ patchTomcatConfigs ()
 
 {
 
-	if [ ! -d "/usr/share/tomcat6/endorsed" ]; then
-		mkdir /usr/share/tomcat6/endorsed
+	if [ -d "/usr/share/tomcat6/endorsed" ]; then
+		rm -rf /usr/share/tomcat6/endorsed
+		sed -e '/endorsed/ s/^#*/#/' -i ${tomcatSettingsFile}
 	fi
-	for i in `ls /opt/shibboleth-identityprovider/endorsed/`; do
-		if [ ! -s "/usr/share/tomcat6/endorsed/${i}" ]; then
-			cp /opt/shibboleth-identityprovider/endorsed/${i} /usr/share/tomcat6/endorsed
-		fi
-	done
 
-	. ${tomcatSettingsFile}
-	if [ -z "`${Echo} ${JAVA_OPTS} | grep '/usr/share/tomcat6/endorsed'`" ]; then
-		JAVA_OPTS="`${Echo} ${JAVA_OPTS} | sed -re 's/-Xmx128m//'` -Djava.endorsed.dirs=/usr/share/tomcat6/endorsed -Xms512m -Xmx512m -XX:MaxPermSize=128m"
-		JAVA_OPTS="`${Echo} ${JAVA_OPTS} | sed -re 's/^\s+//'`"
-		${Echo} "JAVA_OPTS=\"${JAVA_OPTS}\"" >> ${tomcatSettingsFile}
-		if [ "${dist}" != "ubuntu" ]; then
-			${Echo} 'JAVA_ENDORSED_DIRS="/usr/share/tomcat6/endorsed"' >> ${tomcatSettingsFile}
-		fi
-	else
-		${Echo} "JAVA_OPTS for tomcat already configured" >> ${messages}
-	fi
+	echo "JAVA_OPTS=\"-Xms512m -Xmx512m -XX:MaxPermSize=128m\"" >> ${tomcatSettingsFile}
+
 	if [ "${dist}" == "ubuntu" ]; then
 		if [ "${AUTHBIND}" != "yes" ]; then
 			${Echo} "AUTHBIND=yes" >> ${tomcatSettingsFile}
@@ -1154,9 +1151,13 @@ patchShibbolethConfigs ()
 	fi
 
 	if [ "${eptid}" != "n" ]; then
-		epass=`${passGenCmd}`
+		if [ -z "${epass}" ]; then
+			epass=`${passGenCmd}`
+		fi
 # 		grant sql access for shibboleth
-		esalt=`openssl rand -base64 36 2>/dev/null`
+		if [ -z "${esalt}" ]; then
+			esalt=`openssl rand -base64 36 2>/dev/null`
+		fi
 		cat ${Spath}/xml/${my_ctl_federation}/eptid.sql.template | sed -re "s#SqLpAsSwOrD#${epass}#" > ${Spath}/xml/${my_ctl_federation}/eptid.sql
 		files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/eptid.sql"
 
@@ -1260,11 +1261,11 @@ notifyUserBeforeExit()
 	${Echo} "To test it, register at testshib.org and register this idp and run a logon test."
 	${Echo} "Certificate for idp metadata is in the file: /opt/shibboleth-idp/credentials/idp.crt"
 
-if [ "${type}" = "ldap" ]; then
-	${Echo} "\n\n"
-	${Echo} "Looks like you have chosen to use ldap for Shibboleth single sign on.\n"
-	${Echo} "Please read this to customize the logon page: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"
-fi
+	if [ "${type}" = "ldap" ]; then
+		${Echo} "\n\n"
+		${Echo} "Looks like you have chosen to use ldap for Shibboleth single sign on.\n"
+		${Echo} "Please read this to customize the logon page: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPAuthUserPassLoginPage"
+	fi
 
 	${Echo} "\n\nProcessing complete. You may want to reboot to ensure all services start up as expected.\n\nExiting.\n"
 
@@ -1395,103 +1396,167 @@ enableTomcatOnRestart ()
 
 }
 
+checkAndLoadBackupFile ()
+{
+	backFile=`ls ${Spath} | egrep "^idp-export-.+tar.gz"`
+	if [ "x${backFile}" != "x" ]; then
+		${Echo} "Found backup, extracting and load settings" >> ${statusFile} 2>&1
+		mkdir ${Spath}/extract 2>/dev/null
+		cd ${Spath}/extract
+		tar zxf ${Spath}/${backFile}
+		. settingsToImport.sh
+		cd ${Spath}
+	else
+		${Echo} "No backup found." >> ${statusFile} 2>&1
+	fi
+}
+
+loadDatabaseDump ()
+{
+	if [ -s "${Spath}/extract/sql.dump" ]; then
+		if [ "${ehost}" = "localhost" ]; then
+			if [ "${etype}" = "mysql" ]; then
+				mysql -uroot -p"${mysqlPass}" -D ${eDB} < ${Spath}/extract/sql.dump
+			fi
+		else
+			${Echo} "Database not on localhost, skipping database import." >> ${messages}
+		fi
+	fi
+}
+
+overwriteConfigFiles ()
+{
+	if [ -f "${Spath}/extract/opt/shibboleth-idp/conf/fticks-key.txt" ]; then
+		mv ${Spath}/extract/opt/shibboleth-idp/conf/fticks-key.txt /opt/shibboleth-idp/conf/fticks-key.txt
+		chown ${tcatUser} /opt/shibboleth-idp/conf/fticks-key.txt
+	fi
+# 	if [ -d "${Spath}/extract/opt/shibboleth-idp/conf" -a "x`ls ${Spath}/extract/opt/shibboleth-idp/conf`" != "x" ]; then
+# 		for i in `ls ${Spath}/extract/opt/shibboleth-idp/conf/`; do
+# 			mv ${Spath}/extract/opt/shibboleth-idp/conf/$i /opt/shibboleth-idp/conf
+# 			chown ${tcatUser} /opt/shibboleth-idp/conf/$i
+# 		done
+# 	fi
+	if [ -d "${Spath}/extract/opt/shibboleth-idp/metadata" -a "x`ls ${Spath}/extract/opt/shibboleth-idp/metadata 2>/dev/null`" != "x" ]; then
+		for i in `ls ${Spath}/extract/opt/shibboleth-idp/metadata/`; do
+			mv ${Spath}/extract/opt/shibboleth-idp/metadata/$i /opt/shibboleth-idp/metadata
+			chown ${tcatUser} /opt/shibboleth-idp/metadata/$i
+		done
+	fi
+}
+
+overwriteKeystoreFiles ()
+{
+	if [ -d "${Spath}/extract/opt/shibboleth-idp/credentials" -a "x`ls ${Spath}/extract/opt/shibboleth-idp/credentials 2>/dev/null`" != "x" ]; then
+		mv ${Spath}/extract/opt/shibboleth-idp/credentials/* /opt/shibboleth-idp/credentials
+	fi
+	if [ -f "${Spath}/extract/${httpsP12}" ]; then
+		mv ${Spath}/extract/${httpsP12} ${httpsP12}
+	fi
+	if [ "x${keyFile}" != "x" -a -f "${Spath}/extract/${keyFile}" ]; then
+		mv ${Spath}/extract/${keyFile} ${keyFile}
+	fi
+}
+
+
 invokeShibbolethInstallProcess ()
 {
 
 	### Begin of SAML IdP installation Process
 
-${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
-                	continueFwipe=$?
-                	if [ "${continueFwipe}" -eq 0 ]
-                	then
+	if [ "${silent}" -eq 1 ]; then
+		continueFwipe=0
+	else
+		${whiptailBin} --backtitle "${GUIbacktitle}" --title "Deploy Shibboleth customizations" --defaultno --yes-button "Yes, proceed" --no-button "No, back to main menu" --yesno --clear -- "Proceed with deploying Shibboleth and related settings?" ${whipSize} 3>&1 1>&2 2>&3
+                continueFwipe=$?
+	fi
+	if [ "${continueFwipe}" -eq 0 ]; then
 
-	# check for installed IDP
-	setVarUpgradeType
+# 		check for installed IDP
+		setVarUpgradeType
 
-	# Override per federation
-	performStepsForShibbolethUpgradeIfRequired
+		# Override per federation
+		performStepsForShibbolethUpgradeIfRequired
 
-	askForConfigurationData
-	prepConfirmBox
+# 		check for backup file and use it if available
+		checkAndLoadBackupFile
 
-# 	askForSaveConfigToLocalDisk
+		askForConfigurationData
+		prepConfirmBox
 
-	notifyMessageDeployBeginning
+# 		askForSaveConfigToLocalDisk
 
+		notifyMessageDeployBeginning
 
-	setVarPrepType
-	setVarCertCN
+		setVarPrepType
+		setVarCertCN
 
-	installDependanciesForInstallation
+		installDependanciesForInstallation
 
-	fetchJavaIfNeeded
+		fetchJavaIfNeeded
 
-	setJavaHome
-	
-	setJavaCACerts
+		setJavaHome
 
-	generatePasswordsForSubsystems
+		setJavaCACerts
 
-	installTomcat
-	
-	
+		generatePasswordsForSubsystems
 
-	fetchAndUnzipShibbolethIdP
+		installTomcat
 
-	
-	installCasClientIfEnabled
-	
+		fetchAndUnzipShibbolethIdP
 
-	installFticksIfEnabled
+		installCasClientIfEnabled
 
-	
-	
-	installEPTIDSupport
+		installFticksIfEnabled
 
+		installEPTIDSupport
 
+		configTomcatServerXMLForPasswd
 
-	configTomcatServerXMLForPasswd
-
-	configShibbolethXMLAttributeResolverForLDAP
-	
-
-	runShibbolethInstaller
+		configShibbolethXMLAttributeResolverForLDAP
 
 
-	createCertificatePathAndHome
+		runShibbolethInstaller
 
-	
-	# Override per federation
-	installCertificates
+		createCertificatePathAndHome
 
-	configShibbolethSSLForLDAPJavaKeystore
+# 		Override per federation
+		installCertificates
 
-	# Override per federation
-	configTomcatSSLServerKey
+		configShibbolethSSLForLDAPJavaKeystore
 
-	patchShibbolethLDAPLoginConfigs
+# 		Override per federation
+		configTomcatSSLServerKey
 
-	patchTomcatConfigs
-	
-	# Override per federation
-	configShibbolethFederationValidationKey
+		patchShibbolethLDAPLoginConfigs
 
-	patchShibbolethConfigs
+		patchTomcatConfigs
 
-	updateMachineTime
+# 		Override per federation
+		configShibbolethFederationValidationKey
 
-	updateTomcatAddingIDPWar
+		patchShibbolethConfigs
 
+		updateMachineTime
 
-restartTomcatService
+		updateTomcatAddingIDPWar
 
-enableTomcatOnRestart
+# 		install files from backup
+		overwriteConfigFiles
+		overwriteKeystoreFiles
 
-else
+# 		load the database dump if available
+		loadDatabaseDump
 
-				${whiptailBin} --backtitle "${GUIbacktitle}" --title "Shibboleth customization aborted" --msgbox "Shibboleth customizations WERE NOT done. Choose OK to return to main menu" ${whipSize} 
+		restartTomcatService
 
-                	fi
+		enableTomcatOnRestart
+
+	else
+
+		if  [ "${silent}" -eq 0 ]; then
+			${whiptailBin} --backtitle "${GUIbacktitle}" --title "Shibboleth customization aborted" --msgbox "Shibboleth customizations WERE NOT done. Choose OK to return to main menu" ${whipSize}
+		fi
+fi
 
 
 }

@@ -29,18 +29,27 @@ installCertificates () {
 	echo -e "${my_local_override_msg}"
 
 
-# change to certificate path whilst doing this part
+	# change to certificate path whilst doing this part
 	cd ${certpath}
-	${Echo} "Fetching TCS CA chain from web"
+	${Echo} "Fetching CA chains from web"
 	${fetchCmd} ${certpath}/server.chain ${certificateChain}
-	if [ ! -s "${certpath}/server.chain" ]; then
+	${fetchCmd} ${certpath}/digicert.server.chain ${certificateChainNew}
+	if [ ! -s "${certpath}/server.chain" -o ! -s "${certpath}/digicert.server.chain" ]; then
 		${Echo} "Can not get the certificate chain, aborting install."
 		cleanBadInstall
 	fi
 
-	${Echo} "Installing TCS CA chain in java cacert keystore"
+	${Echo} "Installing TCS  and digicert CA chains in java cacert keystore"
 	cnt=1
-	for i in `cat ${certpath}server.chain | sed -re 's/\ /\*\*\*/g'`; do
+	for i in `cat ${certpath}/server.chain | sed -re 's/\ /\*\*\*/g'`; do
+		n=`${Echo} ${i} | sed -re 's/\*\*\*/\ /g'`
+		${Echo} ${n} >> ${certpath}${cnt}.root
+		ltest=`${Echo} ${n} | grep "END CERTIFICATE"`
+		if [ ! -z "${ltest}" ]; then
+			cnt=`expr ${cnt} + 1`
+		fi
+	done
+	for i in `cat ${certpath}/digicert.server.chain | sed -re 's/\ /\*\*\*/g'`; do
 		n=`${Echo} ${i} | sed -re 's/\*\*\*/\ /g'`
 		${Echo} ${n} >> ${certpath}${cnt}.root
 		ltest=`${Echo} ${n} | grep "END CERTIFICATE"`
@@ -49,17 +58,20 @@ installCertificates () {
 		fi
 	done
 	ccnt=1
+	cntIns=0
 	while [ ${ccnt} -lt ${cnt} ]; do
 		md5finger=`keytool -printcert -file ${certpath}${ccnt}.root | grep MD5 | cut -d: -f2- | sed -re 's/\s+//g'`
 		test=`keytool -list -keystore ${javaCAcerts} -storepass changeit | grep ${md5finger}`
 		subject=`openssl x509 -subject -noout -in ${certpath}${ccnt}.root | awk -F= '{print $NF}'`
 		if [ -z "${test}" ]; then
 			keytool -import -noprompt -trustcacerts -alias "${subject}" -file ${certpath}${ccnt}.root -keystore ${javaCAcerts} -storepass changeit >> ${statusFile} 2>&1
+			cntIns=`expr ${cntIns} + 1`
 		fi
 		files="`${Echo} ${files}` ${certpath}${ccnt}.root"
 		ccnt=`expr ${ccnt} + 1`
 	done
-	
+
+	echo "Successfully fetched CA chains. Number loaded: ${cntIns} into this keystore ${javaCAcerts}"
 }
 
 configShibbolethFederationValidationKey () {

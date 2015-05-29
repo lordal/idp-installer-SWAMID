@@ -13,14 +13,13 @@ HELP="
 # Chris Phillips, CANARIE                                                    #
 #                                                                            #
 #                                                                            #
-# Version 2.6                                                                #
+# Version 2.7                                                                #
 #                                                                            #
 # Deploys a working IDP for SWAMID on an Ubuntu, CentOS or Redhat system     #
 # SAML2 Uses: tomcat6                                                        #
-#       shibboleth-identityprovider-2.4.0                                    #
+#       shibboleth-identityprovider-2.4.4                                    #
 #       cas-client-3.2.1-release                                             #
-#       mysql-connector-java-5.1.27 (for EPTID)                              #
-#       apache-maven-3.1.1 (for building FTICKS plugin)                      #
+#       mysql-connector-java-5.1.35 (for EPTID)                              #
 # eduroam uses:                                                              #
 #       freeRADIUS-2.1.12                                                    #
 #       samba-3.6.9 (to connect to AD for MS-CHAPv2)                         #
@@ -30,12 +29,13 @@ HELP="
 # To disable the whiptail gui run with argument '-c'                         #
 # To keep generated files run with argument '-k'                             #
 #    NOTE! some of theese files WILL contain cleartext passwords.            #
+# To run in no questions mode run with argument '-s'                         #
 #                                                                            #
 # To add a new template for another authentication, just add a new directory #
 # under the 'prep' directory, add the neccesary .diff files and add any      #
 # special hanlding of those files to the script.                             #
 #                                                                            #
-# You can pre-set configuration values in the file 'config'                  #
+# Use the web GUI to configure the installation.                             #
 #                                                                            #
 # Please send questions and improvements to: anders.lordal@hig.se            #
 ##############################################################################
@@ -74,6 +74,30 @@ Spath="$(cd "$(dirname "$0")" && pwd)"
 setEcho
 # (validateConfig)
 guessLinuxDist
+
+# parse options
+options=$(getopt -o cksh -l "help" -- "$@")
+eval set -- "${options}"
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-c)
+			GUIen="n"
+		;;
+		-k)
+			cleanUp="0"
+		;;
+		-s)
+			silent="1"
+		;;
+		-h | --help)
+			${Echo} "${HELP}"
+			exit
+		;;
+	esac
+	shift
+done
+
+
 
 ${Echo} "\n\n\nStarting up.\n\n\nPackage updates on the machine which could take a few minutes."
 ${Echo} "\nLive logging can be seen by this command in another window:\n\ntail -f ${statusFile}"
@@ -147,26 +171,6 @@ fi
 
 
 setBackTitle
-
-
-# parse options
-options=$(getopt -o ckh -l "help" -- "$@")
-eval set -- "${options}"
-while [ $# -gt 0 ]; do
-	case "$1" in
-		-c)
-			GUIen="n"
-		;;
-		-k)
-			cleanUp="0"
-		;;
-		-h | --help)
-			${Echo} "${HELP}"
-			exit
-		;;
-	esac
-	shift
-done
 
 $Echo "" > ${statusFile}
 
