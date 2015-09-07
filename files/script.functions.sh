@@ -504,6 +504,7 @@ if [ "${type}" = "cas" ]; then
 	mkdir /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
 	cp /opt/cas-client-${casVer}/modules/cas-client-core-${casVer}.jar /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
 	cp /opt/cas-client-${casVer}/modules/commons-logging-1.1.jar /opt/shibboleth-identityprovider/src/main/webapp/WEB-INF/lib
+	cp ${Spath}/files/ssocas-login-handler-0.8.jar /opt/shibboleth-identityprovider/lib/
 
 	cat ${Spath}/${prep}/shibboleth-identityprovider-web.xml.diff.template \
 		| sed -re "s#IdPuRl#${idpurl}#;s#CaSuRl#${caslogurl}#;s#CaS2uRl#${casurl}#" \

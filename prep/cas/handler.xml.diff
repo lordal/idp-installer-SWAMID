@@ -1,15 +1,14 @@
-114a115
+4c4,5
+<                         xsi:schemaLocation="urn:mace:shibboleth:2.0:idp:profile-handler classpath:/schema/shibboleth-2.0-idp-profile-handler.xsd">
+---
+>                         xmlns:sclh="fr:renater:ssocashandler"
+>                         xsi:schemaLocation="urn:mace:shibboleth:2.0:idp:profile-handler classpath:/schema/shibboleth-2.0-idp-profile-handler.xsd fr:renater:ssocashandler classpath:/schema/ssocasloginhandler.xsd">
+114a116
 > <!--
-117a119,130
+117a120
 > -->
+141a145,148
+>     </ph:LoginHandler>
 > 
-> <!-- Remote User handler for CAS support -->
-> <ph:LoginHandler xsi:type="ph:RemoteUser">
->   <ph:AuthenticationMethod>
->     urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified
->   </ph:AuthenticationMethod>
->   <ph:AuthenticationMethod>
->     urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport
->   </ph:AuthenticationMethod>
-> </ph:LoginHandler>
-> 
+>     <ph:LoginHandler xsi:type="sclh:CentralAuthnService" casFiltersPath="/Authn/Cas">
+>         <ph:AuthenticationMethod>urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified</ph:AuthenticationMethod>

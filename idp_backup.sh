@@ -19,6 +19,7 @@ fi
 
 Spath="$(cd "$(dirname "$0")" && pwd)"
 . ${Spath}/files/script.bootstrap.functions.sh
+setEcho
 filesPath="${Spath}/backup-files"
 sqlDumpFile="${filesPath}/sql.dump"
 eptidVarsFile="${filesPath}/eptid.vars"
