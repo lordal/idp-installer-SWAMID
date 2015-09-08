@@ -7,8 +7,9 @@
 > <!--
 117a120
 > -->
-141a145,148
+141a145,149
 >     </ph:LoginHandler>
 > 
 >     <ph:LoginHandler xsi:type="sclh:CentralAuthnService" casFiltersPath="/Authn/Cas">
 >         <ph:AuthenticationMethod>urn:oasis:names:tc:SAML:2.0:ac:classes:unspecified</ph:AuthenticationMethod>
+>         <ph:AuthenticationMethod>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</ph:AuthenticationMethod>
