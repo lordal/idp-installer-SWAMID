@@ -14,7 +14,7 @@
 	<xsl:template match="/">
 		<xsl:for-each select="/resolver:AttributeResolver/resolver:AttributeDefinition">
 			<xsl:if test="@id='eduPersonTargetedID'">
-				<xsl:text>ref=</xsl:text><xsl:value-of select="resolver:Dependency/@ref"/>
+				<xsl:text>ref=</xsl:text><xsl:value-of select="resolver:Dependency/@ref"/><xsl:text>&#xA;</xsl:text>
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>

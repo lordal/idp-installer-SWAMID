@@ -13,13 +13,14 @@ HELP="
 # Chris Phillips, CANARIE                                                    #
 #                                                                            #
 #                                                                            #
-# Version 2.7                                                                #
+# Version 2.6                                                                #
 #                                                                            #
 # Deploys a working IDP for SWAMID on an Ubuntu, CentOS or Redhat system     #
 # SAML2 Uses: tomcat6                                                        #
-#       shibboleth-identityprovider-2.4.4                                    #
+#       shibboleth-identityprovider-2.4.0                                    #
 #       cas-client-3.2.1-release                                             #
-#       mysql-connector-java-5.1.35 (for EPTID)                              #
+#       mysql-connector-java-5.1.27 (for EPTID)                              #
+#       apache-maven-3.1.1 (for building FTICKS plugin)                      #
 # eduroam uses:                                                              #
 #       freeRADIUS-2.1.12                                                    #
 #       samba-3.6.9 (to connect to AD for MS-CHAPv2)                         #
@@ -29,13 +30,12 @@ HELP="
 # To disable the whiptail gui run with argument '-c'                         #
 # To keep generated files run with argument '-k'                             #
 #    NOTE! some of theese files WILL contain cleartext passwords.            #
-# To run in no questions mode run with argument '-s'                         #
 #                                                                            #
 # To add a new template for another authentication, just add a new directory #
 # under the 'prep' directory, add the neccesary .diff files and add any      #
 # special hanlding of those files to the script.                             #
 #                                                                            #
-# Use the web GUI to configure the installation.                             #
+# You can pre-set configuration values in the file 'config'                  #
 #                                                                            #
 # Please send questions and improvements to: anders.lordal@hig.se            #
 ##############################################################################
@@ -74,36 +74,13 @@ Spath="$(cd "$(dirname "$0")" && pwd)"
 setEcho
 # (validateConfig)
 guessLinuxDist
+setDistCommands
 
-# parse options
-options=$(getopt -o cksh -l "help" -- "$@")
-eval set -- "${options}"
-while [ $# -gt 0 ]; do
-	case "$1" in
-		-c)
-			GUIen="n"
-		;;
-		-k)
-			cleanUp="0"
-		;;
-		-s)
-			silent="1"
-		;;
-		-h | --help)
-			${Echo} "${HELP}"
-			exit
-		;;
-	esac
-	shift
-done
-
-
-
-${Echo} "\n\n\nStarting up.\n\n\nPackage updates on the machine which could take a few minutes."
-${Echo} "\nLive logging can be seen by this command in another window:\n\ntail -f ${statusFile}"
-${Echo} "\n\nSleeping for 4 sec and then beginning processing..."
+${Echo} "\n\n\nStarting up.\n\n\n"
+${Echo} "Live logging can be seen by this command in another window:\ntail -f ${statusFile}"
+${Echo} "Sleeping for 4 sec and then beginning processing..."
+${Echo} "==============================================================================="
 sleep 4
-${Echo} "======================================"
 # bootstrapping step from minimal install
 #
 # bindutils to get the basic host info from machine
@@ -111,15 +88,14 @@ ${Echo} "======================================"
 #
 
 if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
-	${Echo} "\n\nAdding a few packages that we will use during the installation process..."
+	${Echo} "\nAdding a few packages that we will use during the installation process..."
+	${Echo} "Package updates on the machine which could take a few minutes."
 	if [ "${dist}" = "ubuntu" ]; then
-		apt-get -y install dos2unix
+		apt-get -y install dos2unix &> >(tee -a ${statusFile})
 	else
-		yum -y install bind-utils dos2unix
+		yum -y install bind-utils net-tools ntpdate dos2unix &> >(tee -a ${statusFile})
 	fi
 fi
-
-
 
 # read config file as early as we can so we may use the variables
 # use dos2unix on file first however in case it has some mad ^M in it
@@ -132,18 +108,22 @@ then
 
 	ValidateConfig
 
-	# experimental --> validateConnectivity
+	if [ -z "${installer_interactive}" ]
+	then
+		installer_interactive="y"
+	fi
 
-	#exit
+	if echo "${installer_section0_buildComponentList}" | grep -q "shibboleth"; then
+		validateConnectivity ${installer_section0_version}
+
+		checkEptidDb
+	fi
 
 else
 	${Echo} "Sorry, this tool requires a configuration file to operate properly. \nPlease use ~/wwww/appconfig/<your_federation>/index.html to create one. Now exiting"
 	exit
 
 fi
-
-
-
 
 
 . ${Spath}/files/script.functions.sh
@@ -155,11 +135,11 @@ federationSpecificInstallerOverrides="${Spath}/files/${my_ctl_federation}/script
 
 if [ -f "${federationSpecificInstallerOverrides}" ]
 then
-	${Echo} "\n\nAdding federation specific overrides for the install process from ${federationSpecificInstallerOverrides}"
+	${Echo} "Adding federation specific overrides for the install process from ${federationSpecificInstallerOverrides}" >> ${statusFile} 2>&1
 	. ${federationSpecificInstallerOverrides}
 else
 	${Echo} "\n\nNo federation specific overrides detected for federation: ${my_ctl_federation} (if this was blank, the config file does not contain BASH variable my_ctl_federation)"
-	${Echo} "\n\nIf there was a value set, but no override file exists, then this installer may be incomplete for that federation. \nPlease refer to the developer docs in ~/docs, exiting now"
+	${Echo} "\n\nIf there was a value set, but no override file exists, then this installer may be incomplete for that federation. \nPlease refer to the developer docs in ~/docs, exiting now" 
 	exit
 fi
 
@@ -172,12 +152,32 @@ fi
 
 setBackTitle
 
-$Echo "" > ${statusFile}
+
+# parse options
+options=$(getopt -o ckh -l "help" -- "$@")
+eval set -- "${options}"
+while [ $# -gt 0 ]; do
+	case "$1" in
+		-c)
+			GUIen="n"
+		;;
+		-k)
+			cleanUp="0"
+		;;
+		-h | --help)
+			${Echo} "${HELP}"
+			exit
+		;;
+	esac
+	shift
+done
+
+$Echo "" >> ${statusFile}
 
 #################################
 #################################
 
-setDistCommands
+#setDistCommands
 setHostnames
 
 

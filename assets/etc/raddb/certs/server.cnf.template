@@ -41,8 +41,8 @@ emailAddress		= optional
 prompt			= no
 distinguished_name	= server
 default_bits		= 2048
-input_password		= whatever
-output_password		= whatever
+input_password		= Cybera_was_here
+output_password		= Cybera_was_here
 
 [server]
 countryName		= CA

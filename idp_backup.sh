@@ -5,9 +5,10 @@ HELP="
 #    NOTE! the tar file WILL contain cleartext passwords.                    #
 #                                                                            #
 # Options                                                                    #
-# -i <idp base directory>         Default: /opt/shibboleth-idp               #
-# -t <tomcat/jetty config directory>    Default: /etc/tomcat6 and            #
-#                                                /opt/jetty/base/etc         #
+# -i <idp base directory>               Default: /opt/shibboleth-idp         #
+# -t <tomcat/jetty config directory>    Default: /etc/tomcat6,               #
+#                                                /etc/tomcat7 and            #
+#                                                /opt/jetty/jetty-base       #
 ##############################################################################
 "
 
@@ -29,7 +30,7 @@ files="${sqlDumpFile} ${eptidVarsFile} ${tomcatVarsFile} ${tomcatVarsFile} ${imp
 locationsToTar="/opt/shibboleth-idp/credentials/* /opt/shibboleth-idp/metadata/idp-metadata.xml `basename ${importFile}`"
 
 idpBase="/opt/shibboleth-idp"
-tomcatConfBases="/etc/tomcat6 /opt/jetty/base/etc"
+tomcatConfBases="/etc/tomcat6 /etc/tomcat7 /opt/jetty/jetty-base"
 for i in $tomcatConfBases; do
 	if [ -d "${i}" ]; then
 		tomcatConfBase=${i}
@@ -84,7 +85,7 @@ if [ ! -d "${idpBase}/conf" ]; then
 	exit
 fi
 
-if [ ! -s "${tomcatConfBase}/server.xml" -a ! -s "${tomcatConfBase}/jetty-shibboleth.xml" ]; then
+if [ ! -s "${tomcatConfBase}/server.xml" -a ! -s "${tomcatConfBase}/jetty.xml" ]; then
 	echo "Can not find tomcat/jetty config at: ${tomcatConfBase}"
 	exit
 fi
@@ -94,7 +95,7 @@ if [ ! -d "${filesPath}" ]; then
 fi
 echo "" > ${importFile}
 
-EPTIDtest=`xsltproc ${Spath}/xslt/get_data_connector.xsl ${idpBase}/conf/attribute-resolver.xml | grep "^ref="`
+EPTIDtest=`xsltproc ${Spath}/xslt/get_data_connector.xsl ${idpBase}/conf/attribute-resolver.xml | grep "^ref=" | tail -1`
 if [ ! -z "${EPTIDtest}" ]; then
 	# grab mysql creds
 	EPTIDref=`echo $EPTIDtest | cut -d= -f2-`
@@ -129,41 +130,46 @@ else
 	echo "Can not find attribute eduPersonTargetedID in attribute-resolver.xml, not running sql-dump."
 fi
 
-keystoreName=""
-keystorePassword=""
-keystoreType=""
-
 if [ -s "${tomcatConfBase}/server.xml" ]; then
 	keystoreName="keystoreFile"
 	keystorePassword="keystorePass"
 	keystoreType=""
 	xsltproc -o ${tomcatVarsFile} ${Spath}/xslt/tomcat_data.xsl ${tomcatConfBase}/server.xml
-elif [ -s "${tomcatConfBase}/jetty-shibboleth.xml" ]; then
-	keystoreName="KeyStorePath"
-	keystorePassword="KeyStorePassword"
-	keystoreType="KeyStoreType"
-	xsltproc -o ${tomcatVarsFile} ${Spath}/xslt/jetty_data.xsl ${tomcatConfBase}/jetty-shibboleth.xml
+	tomcatSSLport=`cat ${tomcatVarsFile} | grep ${keystoreName} | grep -v "^8443" | cut -d'-' -f1`
+	httpspass=`cat ${tomcatVarsFile} | grep "^${tomcatSSLport}-${keystorePassword}" | cut -d= -f2-`
+	httpsP12=`cat ${tomcatVarsFile} | grep "^${tomcatSSLport}-${keystoreName}" | cut -d= -f2-`
+	for i in `cat ${tomcatVarsFile} | grep ${keystoreName}`; do
+		keyFile=`echo ${i} | cut -d= -f2`
+		locationsToTar="${locationsToTar} ${keyFile}"
+	done
+
+	# get data for port 8443
+	pass=`cat ${tomcatVarsFile} | grep "^8443-${keystorePassword}" | cut -d= -f2-`
+	echo "pass=\"${pass}\"" >> ${importFile}
+
+elif [ -s "${tomcatConfBase}/start.d/idp.ini" ]; then
+	tomcatSSLport=`grep "^jetty.https.port=" /opt/jetty/jetty-base/start.d/idp.ini | cut -d= -f2-`
+	httpspass=`grep "jetty.browser.keystore.password=" /opt/jetty/jetty-base/start.d/idp.ini | cut -d= -f2-`
+	httpsP12=`grep "jetty.browser.keystore.path=" /opt/jetty/jetty-base/start.d/idp.ini | cut -d= -f2-`
+	locationsToTar="${locationsToTar} ${httpsP12}"
+
+	# get data for port 8443
+	pass=`grep "jetty.backchannel.keystore.password=" /opt/jetty/jetty-base/start.d/idp.ini | cut -d= -f2-`
+	echo "pass=\"${pass}\"" >> ${importFile}
+	https8443=`grep "jetty.backchannel.keystore.path=" /opt/jetty/jetty-base/start.d/idp.ini | cut -d= -f2-`
+	locationsToTar="${locationsToTar} ${https8443}"
+
 else
 	echo "Could not find jetty/tomcat configuration."
 	exit
 fi
 
-for i in `cat ${tomcatVarsFile} | grep ${keystoreName}`; do
-	keyFile=`echo ${i} | cut -d= -f2`
-	locationsToTar="${locationsToTar} ${keyFile}"
-done
 
 # get data for HTTPS port
-tomcatSSLport=`cat ${tomcatVarsFile} | grep ${keystoreName} | grep -v "^8443" | cut -d'-' -f1`
 echo "tomcatSSLport=\"${tomcatSSLport}\"" >> ${importFile}
-httpspass=`cat ${tomcatVarsFile} | grep "^${tomcatSSLport}-${keystorePassword}" | cut -d= -f2-`
 echo "httpspass=\"${httpspass}\"" >> ${importFile}
-httpsP12=`cat ${tomcatVarsFile} | grep "^${tomcatSSLport}-${keystoreName}" | cut -d= -f2-`
 echo "httpsP12=\"${httpsP12}\"" >> ${importFile}
 
-# get data for port 8443
-pass=`cat ${tomcatVarsFile} | grep "^8443-${keystorePassword}" | cut -d= -f2-`
-echo "pass=\"${pass}\"" >> ${importFile}
 
 if [ -d "/opt/kerberos" ]; then
 	locationsToTar="${locationsToTar} /opt/kerberos/*"
@@ -173,6 +179,10 @@ if [ -d "/opt/idp-kerberos" ]; then
 fi
 if [ -f "/opt/shibboleth-idp/conf/fticks-key.txt" ]; then
 	locationsToTar="${locationsToTar} /opt/shibboleth-idp/conf/fticks-key.txt"
+fi
+if [ -s "/opt/shibboleth-idp/conf/idp.properties" ]; then
+	fticksSalt=`grep idp.fticks.salt /opt/shibboleth-idp/conf/idp.properties |cut -d= -f2-`
+	echo "fticksSalt=\"${fticksSalt}\"" >> ${importFile}
 fi
 
 cd ${filesPath}
@@ -185,3 +195,19 @@ echo "
 Please move the file ${tarFile} to the new IDP and put it in the deployer directory.
 NOTE! The file contains cleartext passwords!
 "
+
+datediff() {
+    d1=$(date -d "$1 + 5 years" +%s)
+    d2=$(date -d "NOW" +%s)
+    echo $(( ($d1 - $d2) / 86400 ))
+}
+dateStr="`openssl x509 -startdate -noout -in /opt/shibboleth-idp/credentials/idp.crt | cut -d= -f2-`"
+daysValid=`datediff "${dateStr}"`
+if [ ${daysValid} -le 0 ]; then
+	echo "Your certificate has been in service for five years or more."
+	echo "A key rollover is highly recommended."
+elif [ ${daysValid} -le 365 ]; then
+        echo "Your certificate has been in service for a long time."
+        echo "${daysValid} days left to a five year lifespan."
+	echo "You should consider a key rollover"
+fi

@@ -181,14 +181,14 @@
     <!-- ========================================== -->
     <!--     Security Configurations                -->
     <!-- ========================================== -->
-    <security:Credential id="IdPCredential" xsi:type="security:X509Filesystem">
+    <security:Credential id="IdPCredential" xsi:type="security:X509ResourceBacked">
         <security:PrivateKey>/home/shib/live/shibboleth-idp/credentials/idp.key</security:PrivateKey>
         <security:Certificate>/home/shib/live/shibboleth-idp/credentials/idp.crt</security:Certificate>
     </security:Credential>
     
     <!-- Trust engine used to evaluate the signature on loaded metadata. -->
     <security:TrustEngine id="shibboleth.MetadataTrustEngine" xsi:type="security:StaticExplicitKeySignature">
-        <security:Credential id="MyFederation1Credentials" xsi:type="security:X509Filesystem">
+        <security:Credential id="MyFederation1Credentials" xsi:type="security:X509ResourceBacked">
             <security:Certificate>/home/shib/live/shibboleth-idp/credentials/caf_metadata_verify.crt</security:Certificate>
             <security:Certificate>/home/shib/live/shibboleth-idp/credentials/mds.cer</security:Certificate>
         </security:Credential>

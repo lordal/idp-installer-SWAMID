@@ -1,7 +1,15 @@
 The download directory for packages and other tidbits to support the deployment
 
-Added mysql-connector-java and ndn-shib-fticks to prevent breakage and remove dependencies.
+Aug 18, 2014 -  added  mysql-connector-java-5.1.32.tar.gz to distribution to prevent breakage
 
-SHA256 checksums:
-fa77909a62363c1aa49ef5ab537ed4affe90a4a6aa5dd1045555b16b2611306d  mysql-connector-java-5.1.35.tar.gz
-ff94c7519b5f3aaab0d160dcdaed4a6139052b1bab0281133c84b25ac6c1256b  ndn-shib-fticks-0.0.1-SNAPSHOT.jar
+and has MD5 checksum of: 8a92d6dd0cd1a5b017684767800c0025
+
+and a GPG signature of:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.9 (SunOS)
+
+iD8DBQBTzzOejHGNO1By4fURAn1OAJ9xeumyQ2VUFzehpJKolGAQlj+0rgCgjUMH
+CBakCVofs75rlPC6NTNUArc=
+=RqBX
+-----END PGP SIGNATURE-----
+

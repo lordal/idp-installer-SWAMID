@@ -2,58 +2,57 @@
 
 # announce the override action since this is just a plain include
 my_local_override_msg="Overriden by ${my_ctl_federation}"
-my_ctl_functionOverrides="configTomcatSSLServerKey installCertificates configShibbolethFederationValidationKey performStepsForShibbolethUpgradeIfRequired askForSaveConfigToLocalDisk patchShibbolethLDAPLoginConfigs"
+my_ctl_functionOverrides="configContainerSSLServerKey installCertificates configShibbolethFederationValidationKey performStepsForShibbolethUpgradeIfRequired askForSaveConfigToLocalDisk patchShibbolethLDAPLoginConfigs"
 
-echo -e "\n\nOverriding functions: ${my_ctl_functionOverrides}\n\n"
+echo -e "Overriding functions: ${my_ctl_functionOverrides}" >> ${statusFile} 2>&1
 
 
 #
-#	GLOBAL overrides
+#       GLOBAL overrides
 #
 #  Things you want to be available to any BASH function in the script should be overridden here.
 
-		echo -e "Overriding certOrg, CertCN, certC"
-		certOrg="${freeRADIUS_svr_org_name}"
-		certCN="${freeRADIUS_svr_commonName}"
-		certC="CA"
-		certLongC="Canada"
-		certAcro="${certOrg}${certC}"
+                echo -e "Overriding certOrg, CertCN, certC" >> ${statusFile} 2>&1
+                certOrg="${freeRADIUS_svr_org_name}"
+                certCN="${freeRADIUS_svr_commonName}"
+                certC="CA"
+                certLongC="Canada"
+                certAcro="${certOrg}${certC}"
 
-# this command takes 4min 45sec to run on a core i7 8gb ram SSD disk. 
-# overriding as the other yum commands 
+# this command takes 4min 45sec to run on a core i7 8gb ram SSD disk.
+# overriding as the other yum commands
 centosCmdU="yum -y update; yum clean all"
 #centosCmdU="yum version"
 # -y update; yum clean all"
 
 
-configTomcatSSLServerKey()
+configContainerSSLServerKey()
 
 {
-		echo -e "${my_local_override_msg}"
 
-
-	#set up ssl store
-	if [ ! -s "${certpath}server.key" ]; then
-		${Echo} "Generating SSL key and certificate request"
-		openssl genrsa -out ${certpath}server.key 2048 2>/dev/null
-		openssl req -new -key ${certpath}server.key -out ${certREQ} -config ${Spath}/files/openssl.cnf -subj "/CN=${certCN}/O=${certOrg}/C=${certC}"
-	fi
-	if [ "${selfsigned}" = "n" ]; then
-		${Echo} "Put the certificate from TCS in the file: ${certpath}server.crt" >> ${messages}
-		${Echo} "Run: openssl pkcs12 -export -in ${certpath}server.crt -inkey ${certpath}server.key -out ${httpsP12} -name tomcat -passout pass:${httpspass}" >> ${messages}
-	else
-		openssl x509 -req -days 365 -in ${certREQ} -signkey ${certpath}server.key -out ${certpath}server.crt
-		if [ ! -d "/opt/shibboleth-idp/credentials/" ]; then
-			mkdir /opt/shibboleth-idp/credentials/
-		fi
-		openssl pkcs12 -export -in ${certpath}server.crt -inkey ${certpath}server.key -out ${httpsP12} -name tomcat -passout pass:${httpspass}
-	fi
+        #set up ssl store
+        if [ ! -s "${certpath}server.key" ]; then
+                ${Echo} "Generating SSL key and certificate request"
+                openssl genrsa -out ${certpath}server.key 2048 2>/dev/null
+                openssl req -new -key ${certpath}server.key -out ${certREQ} -config ${Spath}/files/openssl.cnf -subj "/CN=${certCN}/O=${certOrg}/C=${certC}"
+        fi
+        if [ "${selfsigned}" = "n" ]; then
+                ${Echo} "Put the certificate from TCS in the file: ${certpath}server.crt" >> ${messages}
+                ${Echo} "Run: openssl pkcs12 -export -in ${certpath}server.crt -inkey ${certpath}server.key -out ${httpsP12} -name container -passout pass:${httpspass}" >> ${messages}
+        else
+                openssl x509 -req -days 365 -in ${certREQ} -signkey ${certpath}server.key -out ${certpath}server.crt
+                if [ ! -d "/opt/shibboleth-idp/credentials/" ]; then
+                        mkdir /opt/shibboleth-idp/credentials/
+                fi
+                openssl pkcs12 -export -in ${certpath}server.crt -inkey ${certpath}server.key -out ${httpsP12} -name container -passout pass:${httpspass}
+        fi
 }
+
 
 installCertificates ()
 
 {
-			echo -e "${my_local_override_msg} "
+			echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 			# Notes
 			# 1. CAF does not have access to TCS CA's, nor needs them. Elements have been commented out, but kept here for reference.
@@ -90,13 +89,18 @@ installCertificates ()
 # 		files="`${Echo} ${files}` ${certpath}${ccnt}.root"
 # 		ccnt=`expr ${ccnt} + 1`
 # 	done
-	
+
+	# Fetch ldap cert
+	for loopServer in ${ldapserver}; do
+		${Echo} "QUIT" | openssl s_client -connect ${loopServer}:636 2>/dev/null | sed -ne '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' >> ${certpath}/ldap-server.crt
+	done
+
 }
 
 configShibbolethFederationValidationKey ()
 
 {
-			echo -e "${my_local_override_msg}"
+			echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 			# Notes:
 			#  1. the file of the certificate of the signer is saved as 'md-signer.crt' which is generic
@@ -128,26 +132,25 @@ configShibbolethFederationValidationKey ()
 patchShibbolethConfigs ()
 {
 
-echo -e "${my_local_override_msg}"
+	echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
-# patch shibboleth config files
+	# patch shibboleth config files
 	${Echo} "Patching config files for ${my_ctl_federation}"
 	mv /opt/shibboleth-idp/conf/attribute-filter.xml /opt/shibboleth-idp/conf/attribute-filter.xml.dist
 
-	#cp ${Spath}/files/attribute-filter.xml.swamid /opt/shibboleth-idp/conf/attribute-filter.xml
-
 	${Echo} "patchShibbolethConfigs:Overlaying attribute-filter.xml with CAF defaults"
 
-	cp ${Spath}/files/CAF/attribute-filter.xml.template /opt/shibboleth-idp/conf/attribute-filter.xml
+	cp ${Spath}/files/${my_ctl_federation}/attribute-filter.xml.template /opt/shibboleth-idp/conf/attribute-filter.xml
 	chmod ugo+r /opt/shibboleth-idp/conf/attribute-filter.xml
 
-	patch /opt/shibboleth-idp/conf/handler.xml -i ${Spath}/${prep}/handler.xml.diff >> ${statusFile} 2>&1
-
 	${Echo} "patchShibbolethConfigs:Overlaying relying-filter.xml with CAF trusts"
-	patch /opt/shibboleth-idp/conf/relying-party.xml -i ${Spath}/xml/${my_ctl_federation}/relying-party.xml.diff >> ${statusFile} 2>&1
+	cat ${Spath}/xml/${my_ctl_federation}/metadata-providers.xml > /opt/shibboleth-idp/conf/metadata-providers.xml
+	cat ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml > /opt/shibboleth-idp/conf/attribute-resolver.xml
+        cat ${Spath}/files/${my_ctl_federation}/relying-party.xml > /opt/shibboleth-idp/conf/relying-party.xml
 
-# 	patch /opt/shibboleth-idp/conf/attribute-resolver.xml -i ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml.diff >> ${statusFile} 2>&1
-	cp ${Spath}/xml/${my_ctl_federation}/attribute-resolver.xml /opt/shibboleth-idp/conf/attribute-resolver.xml
+	if [ "${consentEnabled}" = "n" ]; then
+		sed -i 's#<bean parent="Shibboleth.SSO" p:postAuthenticationFlows="attribute-release" />#<bean parent="Shibboleth.SSO" />#;s#<bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" />#<bean parent="SAML2.SSO" />#' /opt/shibboleth-idp/conf/relying-party.xml
+	fi
 
 	if [ "${google}" != "n" ]; then
 		repStr='<!-- PLACEHOLDER DO NOT REMOVE -->'
@@ -159,25 +162,27 @@ echo -e "${my_local_override_msg}"
 	fi
 
 	if [ "${fticks}" != "n" ]; then
-		patch /opt/shibboleth-idp/conf/logging.xml -i ${Spath}/xml/CAF/fticks.diff >> ${statusFile} 2>&1
+		patch /opt/shibboleth-idp/conf/logback.xml -i ${Spath}/xml/CAF/fticks.diff >> ${statusFile} 2>&1
 		touch /opt/shibboleth-idp/conf/fticks-key.txt
-		chown ${tcatUser} /opt/shibboleth-idp/conf/fticks-key.txt
+		chown ${jettyUser}: /opt/shibboleth-idp/conf/fticks-key.txt
 	fi
 
 	if [ "${eptid}" != "n" ]; then
-		epass=`${passGenCmd}`
-# 		grant sql access for shibboleth
-		esalt=`openssl rand -base64 36 2>/dev/null`
-		cat ${Spath}/xml/${my_ctl_federation}/eptid.sql.template | sed -re "s#SqLpAsSwOrD#${epass}#" > ${Spath}/xml/${my_ctl_federation}/eptid.sql
-		files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/eptid.sql"
+                if [ -z "${epass}" ]; then
+                        epass=`${passGenCmd}`
+                        # grant sql access for shibboleth
+                        esalt=`openssl rand -base64 36 2>/dev/null`
+                        cat ${Spath}/xml/${my_ctl_federation}/eptid.sql.template | sed -re "s#SqLpAsSwOrD#${epass}#" > ${Spath}/xml/${my_ctl_federation}/eptid.sql
+                        files="`${Echo} ${files}` ${Spath}/xml/${my_ctl_federation}/eptid.sql"
 
-		${Echo} "Create MySQL database for Shibboleth ePTiD and shibboleth user for database connection."
-		mysql -uroot -p"${mysqlPass}" < ${Spath}/xml/${my_ctl_federation}/eptid.sql
-		retval=$?
-		if [ "${retval}" -ne 0 ]; then
-			${Echo} "Failed to create EPTID database, take a look in the file '${Spath}/xml/${my_ctl_federation}/eptid.sql.template' and corect the issue." >> ${messages}
-			${Echo} "Password for the database user can be found in: /opt/shibboleth-idp/conf/attribute-resolver.xml" >> ${messages}
-		fi
+                        ${Echo} "Create MySQL database and shibboleth user."
+                        mysql -uroot -p"${mysqlPass}" < ${Spath}/xml/${my_ctl_federation}/eptid.sql
+                        retval=$?
+                        if [ "${retval}" -ne 0 ]; then
+                                ${Echo} "Failed to create EPTID database, take a look in the file '${Spath}/xml/${my_ctl_federation}/eptid.sql.template' and corect the issue." >> ${messages}
+                                ${Echo} "Password for the database user can be found in: /opt/shibboleth-idp/conf/attribute-resolver.xml" >> ${messages}
+                        fi
+                fi
 			
 		cat ${Spath}/xml/${my_ctl_federation}/eptid-AR.diff.template \
 			| sed -re "s#SqLpAsSwOrD#${epass}#;s#Large_Random_Salt_Value#${esalt}#" \
@@ -209,79 +214,57 @@ echo -e "${my_local_override_msg}"
 		sed -i -e "/^${repStr}$/r ${Spath}/xml/${my_ctl_federation}/eptid.add.filter" -e "/^${repStr}$/d" /opt/shibboleth-idp/conf/attribute-filter.xml
 	fi
 
-echo "applying chown "
-chmod o+r /opt/shibboleth-idp/conf/attribute-filter.xml
+        repStr='<!-- LDAP CONNECTOR PLACEHOLDER -->'
+        sed -i -e "/^${repStr}$/r ${Spath}/xml/${my_ctl_federation}/ldapconn.txt" -e "/^${repStr}$/d" /opt/shibboleth-idp/conf/attribute-resolver.xml
 
+	echo "applying chown "
+	chmod o+r /opt/shibboleth-idp/conf/attribute-filter.xml
 
 }
-
-
-
-
-
-
 
 
 performStepsForShibbolethUpgradeIfRequired ()
 
 {
-			echo -e "${my_local_override_msg}"
-
 
 if [ "${upgrade}" -eq 1 ]; then
 
 ${Echo} "Previous installation found, performing upgrade."
 
-	eval ${distCmd1}
-	cd /opt
-	currentShib=`ls -l /opt/shibboleth-identityprovider | awk '{print $NF}'`
-	currentVer=`${Echo} ${currentShib} | awk -F\- '{print $NF}'`
-	if [ "${currentVer}" = "${shibVer}" ]; then
-		mv ${currentShib} ${currentShib}.${ts}
-	fi
+        eval ${distCmd1} &> >(tee -a ${statusFile})
+        cd /opt
+        currentShib=`ls -l /opt/${shibDir} | awk '{print $NF}'`
+        currentVer=`${Echo} ${currentShib} | awk -F\- '{print $NF}'`
+        if [ "${currentVer}" = "${shibVer}" ]; then
+                mv ${currentShib} ${currentShib}.${ts}
+        fi
 
-	if [ ! -f "${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip" ]; then
-		fetchShibboleth
-	fi
-	unzip -q ${Spath}/files/shibboleth-identityprovider-${shibVer}-bin.zip -d /opt
-	chmod -R 755 /opt/shibboleth-identityprovider-${shibVer}
+        if [ ! -f "${downloadPath}/${shibDir}-${shibVer}.tar.gz" ]; then
+                fetchAndUnzipShibbolethIdP
+        fi
+        tar xzf ${downloadPath}/${shibDir}-${shibVer}.tar.gz -C /opt
+        chmod -R 755 /opt/${shibDir}-${shibVer}
 
-	unlink /opt/shibboleth-identityprovider
-	ln -s /opt/shibboleth-identityprovider-${shibVer} /opt/shibboleth-identityprovider
+        # Backup previous V2 environment
+        #tar zcfP ${bupFile} --remove-files /opt/shibboleth-idp
+        service tomcat6 stop
 
-	if [ -d "/opt/cas-client-${casVer}" ]; then
-		installCasClientIfEnabled
-	fi
+        if [ ! -d /opt/bak ]; then
+                cp -ar /opt/shibboleth-idp /opt/bak 2>/dev/null
+        fi
 
-	if [ -d "/opt/ndn-shib-fticks" ]; then
-		if [ -z "`ls /opt/ndn-shib-fticks/target/*.jar`" ]; then
-			cd /opt/ndn-shib-fticks
-			mvn >> ${statusFile} 2>&1
-		fi
-		cp /opt/ndn-shib-fticks/target/*.jar /opt/shibboleth-identityprovider/lib
-	else
-		fticks=$(askYesNo "Send anonymous data" "Do you want to send anonymous usage data to ${my_ctl_federation}?\nThis is recommended")
+        rm -rf /opt/shibboleth-idp
 
-		if [ "${fticks}" != "n" ]; then
-			installFticksIfEnabled
-		fi
-	fi
+        unlink /opt/${shibDir}
+        ln -s /opt/${shibDir}-${shibVer} /opt/${shibDir}
 
-	if [ -d "/opt/mysql-connector-java-${mysqlConVer}/" ]; then
-		cp /opt/mysql-connector-java-${mysqlConVer}/mysql-connector-java-${mysqlConVer}-bin.jar /opt/shibboleth-identityprovider/lib/
-	fi
+        if [ -d "/opt/cas-client-${casVer}" ]; then
+                installCasClientIfEnabled
+        fi
 
-	cd /opt
-	tar zcf ${bupFile} shibboleth-idp
-
-	cp /opt/shibboleth-idp/metadata/idp-metadata.xml /opt/shibboleth-identityprovider/src/main/webapp/metadata.xml
-
-	setJavaHome
-	cd /opt/shibboleth-identityprovider
-	${Echo} "\n\n\n\nRunning shiboleth installer"
-	sh install.sh -Dinstall.config=no -Didp.home.input="/opt/shibboleth-idp" >> ${statusFile} 2>&1
+        setJavaHome
 else
-	${Echo} "\nThis is a fresh Shibboleth Install"
+        ${Echo} "This is a fresh Shibboleth Install"
 
 
 fi
@@ -293,7 +276,7 @@ fi
 askForSaveConfigToLocalDisk ()
 {
 
-echo -e "${my_local_override_msg}"
+echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 # Since everything goes through the config process on the webpage, we do not need this anymore
 
@@ -322,7 +305,7 @@ patchShibbolethLDAPLoginConfigs ()
 
 {
 
-echo -e "${my_local_override_msg}"
+echo -e "${my_local_override_msg}" >> ${statusFile} 2>&1
 
 #FIXME: alter override for federation aware setting rather than just the 'CAF' one
 

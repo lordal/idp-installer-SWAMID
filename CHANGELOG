@@ -1,15 +1,5 @@
 Changelog
 
-2.7	Added idp_backup.sh
-	Changed shibboleth version from 2.4.0 to 2.4.4
-	Changed mysql-connector-java version from 5.1.32 to 5.1.35
-	Revised SWAMID attribute-filter.xml
-	Bundled ndn-shib-fticks and mysql-connector-java
-	Added no questions mode
-	Added installation of the digicert CA chain
-
-2.6	Changed mysql-connector-java version from 5.1.26 to 5.1.32
-
 2.5	Improved support for CentOS / Redhat
 	Removed jboss support
 	Changed mysql-connector-java version from 5.1.24 to 5.1.26

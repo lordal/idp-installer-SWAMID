@@ -1,0 +1,6 @@
+30a31,35
+>         <bean id="authn/Shibcas" parent="shibboleth.AuthenticationFlow"
+>                 p:passiveAuthenticationSupported="true"
+>                 p:forcedAuthenticationSupported="true"
+>                 p:nonBrowserSupported="false" />
+> 
