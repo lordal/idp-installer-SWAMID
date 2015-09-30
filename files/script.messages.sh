@@ -143,6 +143,22 @@ centosRadiusGroup="radiusd"
 redhatEpel5="rpm -Uvh http://download.fedoraproject.org/pub/epel/5/i386/epel-release-5-4.noarch.rpm"
 redhatEpel6="rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-8.noarch.rpm"
 
+slesCmdU="zypper -q -n refresh"
+slesCmd1="zypper -n install -l patch ntp unzip curl >> ${statusFile} 2>&1"
+slesCmd2="zypper -n install -l git-core maven java-1_7_0-openjdk-headless >> ${statusFile} 2>&1"
+slesCmd3="zypper -n install -l update-alternatives >> ${statusFile} 2>&1"
+slesCmd4="zypper -n install -l tomcat >> ${statusFile} 2>&1"
+slesCmd5="zypper -n install -l mysql >> ${statusFile} 2>&1"
+#tomcatSettingsFileS="/etc/default/tomcat6"
+sles_install_nc="zypper -n -linstall netcat"
+sles_install_netstat="zypper -n -l install net-tools"
+sles_install_ldaptools="zypper -n -l install ldap-utils"
+slesEduroamPath="/etc/raddb"
+slesRadiusGroup="radiusd"
+slesMaven12="zypper ar http://download.opensuse.org/repositories/devel:/tools:/building/SLE_12/devel:tools:building.repo;zypper refresh -q -n --gpg-auto-import-keys refresh"
+
+slesCmdEduroam="zypper -n -l install bind-utils ntp samba samba-winbind freeradius-server freeradius-server-krb5 freeradius-server-ldap freeradius-server-perl freeradius-server-python freeradius-server-utils freeradius-server-mysql make"
+slesCmdFedSSO="zypper -n -l install java-1_7_0-openjdk-devel tomcat mysql"
 
 # info for validation of required fields for deployer options
 # one long list but broken apart into sections similar to the HTML installer page

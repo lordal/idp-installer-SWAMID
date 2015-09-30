@@ -64,10 +64,13 @@ patchFirewall()
                 systemctl enable iptables
                 systemctl start iptables
 
+#	elif [ "${dist}" == "sles" ]; then
+		#Integrate SuSE_Firewall or replace	
+
 	elif [ "${dist}" == "ubuntu" ]; then
 		DEBIAN_FRONTEND=noninteractive apt-get install -y iptables-persistent	
         fi
-
+	
 }
 
 fetchJavaIfNeeded ()
@@ -442,6 +445,10 @@ fi
 
 }
 
+installOBS () {
+	 eval $slesMaven12 >> ${statusFile} 2>&1
+}
+
 setHostnames() {
 	FQDN=`hostname`
 	FQDN=`host -t A ${FQDN} | awk '{print $1}' | sed -re 's/\s+//g'`
@@ -490,6 +497,12 @@ installEPTIDSupport ()
                         test=`dpkg -s mysql-server > /dev/null 2>&1`
                         isInstalled=$?
 
+                elif [ "$dist" == "sles" ]; then
+			#package catalog test
+			#test=`zypper search -i mysql > /dev/null 2>&1`
+                        [ -f /etc/init.d/mysql ]
+                        isInstalled=$?
+
                 elif [ "$dist" == "centos" -a "$redhatDist" == "6" ]; then
                         [ -f /etc/init.d/mysqld ]
                         isInstalled=$?
@@ -518,6 +531,8 @@ installEPTIDSupport ()
                         mysqldTest=`pgrep mysqld`
                         if [ -z "${mysqldTest}" ]; then
                                 if [ ${dist} == "ubuntu" ]; then
+                                        service mysql restart >> ${statusFile} 2>&1
+                                elif [ ${dist} == "sles" ]; then
                                         service mysql restart >> ${statusFile} 2>&1
                                 else
                                         service mysqld restart >> ${statusFile} 2>&1
@@ -765,6 +780,7 @@ askForConfigurationData() {
 		if [ -z "${caslogurl}" ]; then
 			caslogurl=$(askString "CAS login URL" "Please input the Login URL to your CAS server (https://cas.xxx.yy/cas/login)" "${casurl}/login")
 		fi
+		
 	fi
 
 	if [ -z "${certOrg}" ]; then
@@ -1416,10 +1432,12 @@ jettySetup() {
         sed -i 's/\# JETTY_USER/JETTY_USER=jetty/g' /opt/jetty/bin/jetty.sh
         sed -i 's/\# JETTY_BASE/JETTY_BASE=\/opt\/jetty\/jetty-base/g' /opt/jetty/bin/jetty.sh
         sed -i 's/TMPDIR:-\/tmp/TMPDIR:-\/opt\/jetty\/jetty-base\/tmp/g' /opt/jetty/bin/jetty.sh
-        useradd -d /opt/jetty -s /bin/bash jetty
+        useradd -d /opt/jetty -s /bin/bash -U jetty
         ln -s /opt/jetty/bin/jetty.sh /etc/init.d/jetty
 
         if [ "${dist}" != "ubuntu" ]; then
+                chkconfig jetty on
+	elif [ "${dist}" != "sles" ]; then
                 chkconfig jetty on
         else
                 update-rc.d jetty defaults
@@ -1464,6 +1482,9 @@ restartJettyService ()
 		iptables-save > /etc/sysconfig/iptables
         elif [ "${dist}" == "ubuntu" ]; then
 	 	iptables-save > /etc/iptables/rules.v4
+        elif [ "${dist}" == "sles" ]; then
+	 	# intergrate with SuSE_firewall for iptables
+		iptables-save
 	fi
 
 	service iptables restart
@@ -1770,8 +1791,11 @@ invokeShibbolethUpgradeProcess()
         if [ -a "/opt/${jetty9Path}/bin/jetty.sh" ]; then
                 echo "Jetty detected as installed"
         else
+
                 if [ ${dist} == "ubuntu" ]; then
                         apt-get -y remove --purge tomcat6 openjdk* default-jre java*
+                elif [ ${dist} == "sles" ]; then
+			zypper -n -l remove tomcat* openjdk* java*                        
                 else
                         yum -y remove tomcat* java*
                 fi
