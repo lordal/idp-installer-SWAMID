@@ -1432,7 +1432,7 @@ jettySetup() {
         sed -i 's/\# JETTY_USER/JETTY_USER=jetty/g' /opt/jetty/bin/jetty.sh
         sed -i 's/\# JETTY_BASE/JETTY_BASE=\/opt\/jetty\/jetty-base/g' /opt/jetty/bin/jetty.sh
         sed -i 's/TMPDIR:-\/tmp/TMPDIR:-\/opt\/jetty\/jetty-base\/tmp/g' /opt/jetty/bin/jetty.sh
-        useradd -d /opt/jetty -s /bin/bash jetty
+        useradd -d /opt/jetty -s /bin/bash -U jetty
         ln -s /opt/jetty/bin/jetty.sh /etc/init.d/jetty
 
         if [ "${dist}" != "ubuntu" ]; then
