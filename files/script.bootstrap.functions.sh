@@ -134,6 +134,9 @@ guessLinuxDist() {
 	if [ ! -z "`${Echo} ${dist} | grep -i 'ubuntu' | grep -v 'grep'`" ]
 	then
 		dist="ubuntu"
+	elif [ ! -z "`${Echo} ${dist} | grep -i 'suse' | grep -v 'grep'`" ]
+	then
+		dist="sles"
 	elif [ ! -z "`${Echo} ${dist} | grep -i 'redhat' | grep -v 'grep'`" ]
 	then
 		dist="redhat"
@@ -156,6 +159,7 @@ guessLinuxDist() {
 }
 
 setDistCommands() {
+
         if [ ${dist} = "ubuntu" ]; then
 		redhatDist="none"
 		debianDist=`cat /etc/issue.net | awk -F' ' '{print $2}'  | cut -d. -f1`
@@ -174,6 +178,24 @@ setDistCommands() {
 		distRadiusGroup=${ubuntuRadiusGroup}
 		templatePathEduroamDist=${templatePathEduroamUbuntu}
 		distEduroamModules=${UbuntuEduroamModules}
+        elif [ ${dist} = "sles" ]; then
+		redhatDist="none"
+		debianDist=`cat /etc/issue.net | awk -F' ' '{print $2}'  | cut -d. -f1`
+                distCmdU=${slesCmdU}
+                distCmdUa=${slesCmdUa}
+                distCmd1=${slesCmd1}
+                distCmd2=${slesCmd2}
+                distCmd3=${slesCmd3}
+                distCmd4=${slesCmd4}
+                distCmd5=${slesCmd5}
+                tomcatSettingsFile=${tomcatSettingsFileS}
+                dist_install_nc=${sles_install_nc}
+                dist_install_ldaptools=${sles_install_ldaptools}
+                distCmdEduroam=${slesCmdEduroam}
+		distEduroamPath=${slesEduroamPath}
+		distRadiusGroup=${slesRadiusGroup}
+		templatePathEduroamDist=${templatePathEduroamSles}
+		distEduroamModules=${SlesEduroamModules}
         elif [ ${dist} = "centos" -o "${dist}" = "redhat" ]; then
                 if [ ${dist} = "centos" ]; then
 			redhatDist=`rpm -q centos-release | awk -F'-' '{print $3}'`
