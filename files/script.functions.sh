@@ -1794,7 +1794,7 @@ invokeShibbolethUpgradeProcess()
 
                 if [ ${dist} == "ubuntu" ]; then
                         apt-get -y remove --purge tomcat6 openjdk* default-jre java*
-                if [ ${dist} == "ubuntu" ]; then
+                elif [ ${dist} == "sles" ]; then
 			zypper -n -l remove tomcat* openjdk* java*                        
                 else
                         yum -y remove tomcat* java*
