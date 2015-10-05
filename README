@@ -2,7 +2,7 @@ Introduction to the Federated Identity Appliance Deployer Tool
 -------------------------------------------------------------------------------
 
 This tool is a set of scripts that automates the deployment and configuration
-of software used to participate with your SAML2 or eduroam identity federation 
+of software used to participate with your SAML2 or eduroam identity federation
 services.
 
 
@@ -12,19 +12,19 @@ Configured deployment profiles listed alphabetically are:
  SWAMID - Swedish Academic Identity ( http://www.swamid.se/ )
 
 
-Each federation may have a different deployment profile and supported 
+Each federation may have a different deployment profile and supported
 configurations. What follows are the generic steps to follow to do an installation.
 
-Please consult ~/docs/README.<federation_name> for federation 
+Please consult ~/docs/README.<federation_name> for federation
 specific deployment instructions.
 
 
-Supported Platforms 
+Supported Platforms
 -------------------------------------------------------------------------------
 
 This installer script is intended to be used on a clean install of:
- - Ubuntu Server 12.04   (SWAMID only)
- - CentOS 6.5 'minimal'  (SWAMID or CAF only)
+ - Ubuntu Server 14.04   (SWAMID only)
+ - CentOS 7 'minimal'  (SWAMID or CAF only)
 
 It *MAY* run on pre-existing installations of these OS', but steps in the installer
 presume the installed services are 'alone' on the machine and may modify your
@@ -35,8 +35,8 @@ existing host settings.
 Configuration
 -------------------------------------------------------------------------------
 
-This script requires a configuration file to run. The configuration file is 
-generated using a local HTML based configuration builder to construct it. 
+This script requires a configuration file to run. The configuration file is
+generated using a local HTML based configuration builder to construct it.
 This technique helps avoid storing sensitive data like passwords anywhere.
 
 Configuration builders are federation specific and can be launched from:
@@ -44,11 +44,11 @@ Configuration builders are federation specific and can be launched from:
 for CAF - ~/www/appconfig/CAF/index.html
 for SWAMID - ~/www/appconfig/SWAMID/index.html
 
-The configuration builder uses javascript to perform basic validation and 
+The configuration builder uses javascript to perform basic validation and
 has the ability to import existing configuration files avoiding retyping
 information.
 
-For best configuration builder experience, we strongly recommend using Firefox 
+For best configuration builder experience, we strongly recommend using Firefox
 or Google Chrome. Using IE for the configuration builder is discouraged.
 
 
@@ -58,7 +58,7 @@ General Installation Steps
 These steps expect that the implementer will perform backups or snapshots as necessary.
 
 1. Review your federation specific post install steps
-2. Determine your deployment style (dev? production?) 
+2. Determine your deployment style (dev? production?)
 3. Create a configuration from your federations' configuration builder
 4. save configuration as 'config' in this directory on your server
 5. run the script ./deploy_idp.sh
@@ -82,7 +82,6 @@ eduroam (RADIUS):
 
 Shibboleth (SAML2):
 	- uses self signed server certificate
-	- has attribute release policy for testshib.org
 	- blank passwords autogenerate for SSL keystores
 	- optional anonymized usage reporting in FTICKS formats
 
@@ -92,18 +91,17 @@ Please see: ~/docs/README.<federation_name> for federation specific usage
 
 Profile of installed software 
 -------------------------------------------------------------------------------
-SAML2 Uses: 
-      tomcat6                                                        
-      shibboleth-identityprovider-2.4.3                                    
-      cas-client-3.3.3-release                                             
-      mysql-connector-java-5.1.32 (for EPTID)                              
-      apache-maven-3.1.1 (for building FTICKS plugin) 
+SAML2 Uses:
+      jetty-9.2.13
+      shibboleth-identityprovider-3.1.2
+      cas-client-3.3.3-release
+      mysql-connector-java-5.1.35 (for EPTID)
 
 
 
-eduroam uses:																 
-      freeRADIUS-2.1.12                                                    
-      samba-3.6.9 (to connect to AD for MS-CHAPv2)                         
+eduroam uses:
+      freeRADIUS-2.1.12
+      samba-3.6.9 (to connect to AD for MS-CHAPv2)
 
 
 Disclamer
