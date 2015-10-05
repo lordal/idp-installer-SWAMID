@@ -64,6 +64,13 @@ patchFirewall()
                 systemctl enable iptables
                 systemctl start iptables
 
+        elif [ "${dist}" == "redhat" -a "${redhatDist}" == "7" ]; then
+                systemctl stop firewalld
+                systemctl mask firewalld
+                eval "yum -y install iptables-services" >> ${statusFile} 2>&1
+                systemctl enable iptables
+                systemctl start iptables
+
 	elif [ "${dist}" == "ubuntu" ]; then
 		DEBIAN_FRONTEND=noninteractive apt-get install -y iptables-persistent	
         fi
@@ -486,30 +493,31 @@ installEPTIDSupport ()
         if [ "${eptid}" != "n" ]; then
                 ${Echo} "Installing EPTID support"
 
-                if [ "$dist" == "ubuntu" ]; then
-                        test=`dpkg -s mysql-server > /dev/null 2>&1`
-                        isInstalled=$?
+		if [ "${dist}" == "ubuntu" ]; then
+			test=`dpkg -s mysql-server > /dev/null 2>&1`
+			isInstalled=$?
 
-                elif [ "$dist" == "centos" -a "$redhatDist" == "6" ]; then
-                        [ -f /etc/init.d/mysqld ]
-                        isInstalled=$?
+		elif [ "${dist}" == "centos" -o "${dist}" == "redhat" ]; then
+			if [ "${redhatDist}" == "6" ]; then
+				[ -f /etc/init.d/mysqld ]
+				isInstalled=$?
 
-                elif [ "$dist" == "centos" -a "$redhatDist" == "7" ]; then
-                        #Add Oracle repos
-                        if [ ! -z "`rpm -q mysql-community-release | grep ' is not installed'`" ]; then
+			elif [ "${redhatDist}" == "7" ]; then
+				#Add Oracle repos
+				if [ ! -z "`rpm -q mysql-community-release | grep ' is not installed'`" ]; then
+					${Echo} "Detected no MySQL, adding repos into /etc/yum.repos.d/ and updating them"
+					mysqlOracleRepo="rpm -Uvh http://repo.mysql.com/mysql-community-release-el7.rpm"
+					eval $mysqlOracleRepo >> ${statusFile} 2>&1
 
-                                ${Echo} "Detected no MySQL, adding repos into /etc/yum.repos.d/ and updating them"
-                                mysqlOracleRepo="rpm -Uvh http://repo.mysql.com/mysql-community-release-el7.rpm"
-                                eval $mysqlOracleRepo >> ${statusFile} 2>&1
+				else
+					${Echo} "Dected MySQL Repo EXIST on this system."
 
-                        else
+				fi
+				test=`rpm -q mysql-community-server > /dev/null 2>&1`
+				isInstalled=$?
 
-                                ${Echo} "Dected MySQL Repo EXIST on this system."
-                        fi
-                        test=`rpm -q mysql-community-server > /dev/null 2>&1`
-                        isInstalled=$?
-
-                fi
+			fi
+		fi
 
                 if [ "${isInstalled}" -ne 0 ]; then
                         export DEBIAN_FRONTEND=noninteractive
