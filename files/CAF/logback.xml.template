@@ -83,7 +83,7 @@
     
 <!-- IdP Installer: added local file and syslog appender for FTICKS anonymized logging  -->
 <appender name="IDP_AUDIT_FTICKS_SYSLOG" class="ch.qos.logback.classic.net.SyslogAppender">
-    <syslogHost>${idp.fticks.loghost}/syslogHost>
+    <syslogHost>${idp.fticks.loghost}</syslogHost>
     <facility>AUTH</facility>
     <suffixPattern>[%thread] %logger %msg</suffixPattern>
   </appender>
