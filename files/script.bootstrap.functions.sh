@@ -112,6 +112,35 @@ askString() {
 	${Echo} "${string}"
 }
 
+cleanBadInstall() {
+	if [ -d "/opt/${shibDir}" ]; then
+		rm -rf /opt/${shibDir}*
+	fi
+	if [ -d "/opt/cas-client-${casVer}" ]; then
+		rm -rf /opt/cas-client-${casVer}
+	fi
+	if [ -d "/opt/ndn-shib-fticks" ]; then
+		rm -rf /opt/ndn-shib-fticks
+	fi
+	if [ -d "/opt/shibboleth-idp" ]; then
+		rm -rf /opt/shibboleth-idp
+	fi
+	if [ -d "/opt/mysql-connector-java-5.1.27" ]; then
+		rm -rf /opt/mysql-connector-java-5.1.27
+	fi
+	if [ -f "/usr/share/tomcat6/lib/tomcat6-dta-ssl-1.0.0.jar" ]; then
+		rm /usr/share/tomcat6/lib/tomcat6-dta-ssl-1.0.0.jar
+	fi
+	if [ -d "/opt/apache-maven-3.1.0/" ]; then
+		rm -rf /opt/apache-maven-3.1.0/
+	fi
+	if [ -s "/etc/profile.d/maven-3.1.sh" ]; then
+		rm -rf /etc/profile.d/maven-3.1.sh
+	fi
+
+	exit 1
+}
+
 
 
 ValidateConfig() {
