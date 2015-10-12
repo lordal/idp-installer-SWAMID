@@ -567,8 +567,8 @@ validateConnectivity()
 		if [ "${installer_interactive}" = "y" ]; then
 			read choice
 		fi
-		if [ ! -z $choice ]; then
-			if [ $choice != "continue" ]
+		if [ ! -z "$choice" ]; then
+			if [ "$choice" != "continue" ]
 				then
 					${Echo} "Installation has been canceled."
 					exit 1
@@ -583,8 +583,8 @@ validateConnectivity()
 		if [ "${installer_interactive}" = "y" ]; then
 			read choice
 		fi
-		if [ ! -z $choice ]; then
-			if [ $choice == "Y" -o $choice == "y" -o $choice == "yes" ]; then
+		if [ ! -z "$choice" ]; then
+			if [ "$choice" == "Y" -o "$choice" == "y" -o "$choice" == "yes" ]; then
 					${Echo} "Continue..."
 				else
 					${Echo} "Installation has been canceled."
