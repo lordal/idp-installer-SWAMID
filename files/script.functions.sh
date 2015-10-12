@@ -155,7 +155,9 @@ setJavaHome () {
         if [ ! -s "${downloadPath}/${javaSrc}" ]; then
                 ${fetchCmd} ${downloadPath}/${javaSrc} -j -L -H "Cookie: oraclelicense=accept-securebackup-cookie"  https://download.oracle.com/otn-pub/java/jdk/8u25-b17/${javaSrc} >> ${statusFile} 2>&1
         fi
-        mkdir /usr/java
+        if [ ! -d "/usr/java" ]; then
+		mkdir /usr/java
+	fi
         tar xzf ${downloadPath}/${javaSrc} -C /usr/java/
         ln -s /usr/java/jre${javaVer}/ /usr/java/latest
         ln -s /usr/java/latest /usr/java/default
