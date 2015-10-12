@@ -1591,6 +1591,8 @@ invokeShibbolethInstallProcessJetty9 ()
 
 	containerDist="Jetty9"
 
+	installDependanciesForInstallation
+
 	# check for installed IDP
 	setVarUpgradeType
 
@@ -1616,8 +1618,6 @@ invokeShibbolethInstallProcessJetty9 ()
 	setVarCertCN
 	setVarIdPScope
 	
-	installDependanciesForInstallation
-
 	setJavaCACerts
 
 	setJavaCryptographyExtensions
