@@ -92,6 +92,11 @@ if [ ! -f "/usr/bin/host" -o ! -f "/usr/bin/dos2unix" ]; then
 	${Echo} "Package updates on the machine which could take a few minutes."
 	if [ "${dist}" = "ubuntu" ]; then
 		apt-get -y install dos2unix ntpdate &> >(tee -a ${statusFile})
+		service ntp status > /dev/null 2>&1
+		ntpCheck=$?
+		if [ ${ntpCheck} -eq 0 ]; then
+			service ntp stop
+		fi
 	else
 		yum -y install bind-utils net-tools ntpdate dos2unix &> >(tee -a ${statusFile})
 	fi
