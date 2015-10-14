@@ -1342,7 +1342,7 @@ restartJettyService ()
         iptables -I INPUT -p tcp -m state --state NEW -m tcp --dport 8443 -j ACCEPT
         iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-port 7443
         
-        if [ "${dist}" == "centos" ]; then
+        if [ "${dist}" == "centos" -o "${dist}" == "redhat" ]; then
 		iptables-save > /etc/sysconfig/iptables
         elif [ "${dist}" == "ubuntu" ]; then
 	 	iptables-save > /etc/iptables/rules.v4
