@@ -252,28 +252,26 @@ EOM
 
 guessLinuxDist() {
 	lsbBin=`which lsb_release 2>/dev/null`
-	if [ -x "${lsbBin}" ]
-	then
+	if [ -x "${lsbBin}" ]; then
 		dist=`lsb_release -i 2>/dev/null | cut -d':' -f2 | sed -re 's/^\s+//g'`
 	fi
 
-	if [ ! -z "`${Echo} ${dist} | grep -i 'ubuntu' | grep -v 'grep'`" ]
-	then
+	if [ ! -z "`${Echo} ${dist} | grep -i 'ubuntu' | grep -v 'grep'`" ]; then
 		dist="ubuntu"
-	elif [ ! -z "`${Echo} ${dist} | grep -i 'redhat' | grep -v 'grep'`" ]
-	then
+	elif [ ! -z "`${Echo} ${dist} | grep -i 'suse' | grep -v 'grep'`" ]; then
+		dist="sles"
+	elif [ -s "/sbin/yast" ]; then
+		dist="sles"
+	elif [ ! -z "`${Echo} ${dist} | grep -i 'redhat' | grep -v 'grep'`" ]; then
 		dist="redhat"
-	elif [ -s "/etc/centos-release" ]
-	then
+	elif [ -s "/etc/centos-release" ]; then
 		dist="centos"
-	elif [ -s "/etc/redhat-release" ]
-	then
+	elif [ -s "/etc/redhat-release" ]; then
 		dist="redhat"
 	else
 		really=$(askYesNo "Distribution" "Can not guess linux distribution, procede assuming debian(ish)?")
 
-		if [ "${really}" != "n" ]
-		then
+		if [ "${really}" != "n" ]; then
 			dist="ubuntu"
 		else
 			cleanBadInstall
@@ -282,6 +280,7 @@ guessLinuxDist() {
 }
 
 setDistCommands() {
+
         if [ ${dist} = "ubuntu" ]; then
 		redhatDist="none"
 		debianDist=`cat /etc/issue.net | awk -F' ' '{print $2}'  | cut -d. -f1`
@@ -300,6 +299,24 @@ setDistCommands() {
 		distRadiusGroup=${ubuntuRadiusGroup}
 		templatePathEduroamDist=${templatePathEduroamUbuntu}
 		distEduroamModules=${UbuntuEduroamModules}
+        elif [ ${dist} = "sles" ]; then
+		redhatDist="none"
+		debianDist=`cat /etc/issue.net | awk -F' ' '{print $2}'  | cut -d. -f1`
+                distCmdU=${slesCmdU}
+                distCmdUa=${slesCmdUa}
+                distCmd1=${slesCmd1}
+                distCmd2=${slesCmd2}
+                distCmd3=${slesCmd3}
+                distCmd4=${slesCmd4}
+                distCmd5=${slesCmd5}
+                tomcatSettingsFile=${tomcatSettingsFileS}
+                dist_install_nc=${sles_install_nc}
+                dist_install_ldaptools=${sles_install_ldaptools}
+                distCmdEduroam=${slesCmdEduroam}
+		distEduroamPath=${slesEduroamPath}
+		distRadiusGroup=${slesRadiusGroup}
+		templatePathEduroamDist=${templatePathEduroamSles}
+		distEduroamModules=${SlesEduroamModules}
         elif [ ${dist} = "centos" -o "${dist}" = "redhat" ]; then
                 if [ ${dist} = "centos" ]; then
 			redhatDist=`rpm -q centos-release | awk -F'-' '{print $3}'`
