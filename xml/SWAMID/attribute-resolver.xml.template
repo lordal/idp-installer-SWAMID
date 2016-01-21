@@ -407,6 +407,15 @@
 			name="urn:oid:1.3.6.1.4.1.25178.1.2.9" friendlyName="schacHomeOrganization" />
 	</resolver:AttributeDefinition>
 
+	<resolver:AttributeDefinition id="schacHomeOrganizationType" xsi:type="Simple"
+					xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="schacHomeOrganizationType">
+		<resolver:Dependency ref="staticAttributes" />
+		<resolver:AttributeEncoder xsi:type="SAML1String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+			name="urn:mace:dir:attribute-def:schacHomeOrganizationType" />
+		<resolver:AttributeEncoder xsi:type="SAML2String" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
+			name="urn:oid:1.3.6.1.4.1.25178.1.2.10" friendlyName="schacHomeOrganizationType" />
+	</resolver:AttributeDefinition>
+
 	<resolver:AttributeDefinition id="principal" xsi:type="PrincipalName" xmlns="urn:mace:shibboleth:2.0:resolver:ad">
 		<resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" xmlns="urn:mace:shibboleth:2.0:attribute:encoder"
 			nameFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified" />
