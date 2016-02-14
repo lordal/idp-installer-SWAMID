@@ -1,0 +1,33 @@
+
+
+<!-- IdP-installer has appended these settings to the config which uncomments entries documented above -->
+ <!--
+    Uncomment to use container managed authentication. The new servlet spec (3.1)
+    supports "**" as a wildcard syntax to avoid role usage, which is normally desirable.
+    Older containers usually support "*" when proprietary options are used (e.g., Jetty
+    requires setting the Strict property on the SecurityManager.)
+    -->
+    <security-constraint>
+        <display-name>Web Login Service</display-name>
+        <web-resource-collection>
+            <web-resource-name>user authentication</web-resource-name>
+            <url-pattern>/Authn/RemoteUser</url-pattern>
+            <url-pattern>/profile/SAML2/SOAP/ECP</url-pattern>
+            <http-method>GET</http-method>
+            <http-method>POST</http-method> 
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>**</role-name>
+        </auth-constraint>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee> 
+        </user-data-constraint>
+    </security-constraint>
+
+ <!-- Uncomment if you want BASIC auth managed by the container. -->
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>ShibUserPassAuth</realm-name>
+    </login-config>
+     
+</web-app>

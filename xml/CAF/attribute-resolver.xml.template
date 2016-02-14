@@ -243,9 +243,9 @@
     </resolver:AttributeDefinition>
         
 
-
+<!-- Idp-Installer: the source for this attribute is from the database StoredId and no longer the classic computedID  -->
     <resolver:AttributeDefinition xsi:type="ad:SAML2NameID" id="eduPersonTargetedID" 
-                                  nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" sourceAttributeID="computedID">
+                                  nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" sourceAttributeID="StoredId">
         <resolver:Dependency ref="StoredId" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" />
         <resolver:AttributeEncoder xsi:type="enc:SAML2XMLObject" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.10" friendlyName="eduPersonTargetedID" />
@@ -254,9 +254,12 @@
     
     <!-- Do NOT use the version of eduPersonTargetedID defined below unless you understand 
          why it was deprecated and know that this reason does not apply to you. -->
-    <!--
-    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonTargetedID.old" scope="hig.se" sourceAttributeID="computedID">
-        <resolver:Dependency ref="computedID" />
+
+    <!-- IdP-Installer: This was originally commented out but is not tested since it's a deprecated style of use.
+                        The IdP-Installer changed the source and dependancy from computedID to StoredId but is not tested.
+
+    <resolver:AttributeDefinition xsi:type="ad:Scoped" id="eduPersonTargetedID.old" scope="your.scope.here.if.you.must" sourceAttributeID="StoredId">
+        <resolver:Dependency ref="StoredId" />
         <resolver:AttributeEncoder xsi:type="enc:SAML1ScopedString" name="urn:mace:dir:attribute-def:eduPersonTargetedID" />
     </resolver:AttributeDefinition>
     -->
@@ -300,10 +303,13 @@
 </resolver:AttributeDefinition>
 
     <!-- Name Identifier related attributes -->
+    <!-- IdP-Installer: As of Shibboleth 3.2.0 this is handled in saml-nameid.xml 
+ 
     <resolver:AttributeDefinition id="transientId" xsi:type="ad:TransientId">
         <resolver:AttributeEncoder xsi:type="enc:SAML1StringNameIdentifier" nameFormat="urn:mace:shibboleth:1.0:nameIdentifier"/>
         <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" nameFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
     </resolver:AttributeDefinition>
+ -->
 
     <!-- ========================================== -->
     <!--      Data Connectors                       -->
@@ -331,7 +337,10 @@
     </resolver:DataConnector>
     
     <!-- Computed targeted ID connector -->
-    <!--
+    <!-- IdP-Installer: This is left commented out as computedID is no longer referred to above 
+                        This would be used if you wanted to hash something based on the uid + salt from the directory
+                        It is not in the reference configuration by the IdP-Installer at this time.
+
     <resolver:DataConnector xsi:type="dc:ComputedId"
                             id="computedID"
                             generatedAttributeID="computedID"
@@ -339,6 +348,7 @@
                             salt="your random string here">
         <resolver:Dependency ref="myLDAP" />
     </resolver:DataConnector> 
+    
     -->
 
 <!-- EPTID ATTRIBUTE CONNECTOR PLACEHOLDER -->
@@ -348,9 +358,9 @@
     <!-- ========================================== -->
     <!--      Principal Connectors                  -->
     <!-- ========================================== -->
-    <resolver:PrincipalConnector xsi:type="pc:Transient" id="shibTransient" nameIDFormat="urn:mace:shibboleth:1.0:nameIdentifier"/>
-    <resolver:PrincipalConnector xsi:type="pc:Transient" id="saml1Unspec" nameIDFormat="urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified"/>
-    <resolver:PrincipalConnector xsi:type="pc:Transient" id="saml2Transient" nameIDFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:transient"/>
+
+    <!-- IdP-Installer: Principal Connectors for  shibTransient, saml1Unspec, saml2Transient are now taken care of in saml-nameid.xml -->
+
 <!-- EPTID PRINCIPAL CONNECTOR PLACEHOLDER -->
 
 

@@ -1,233 +1,273 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-
-The configuration documented here require Shibboleth IdP v2.3.4 or later, which fully supports using entity attributes in SP metadata as part of an attribute release filter policy
-
--->
-
-<afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
-				xmlns:afp="urn:mace:shibboleth:2.0:afp" xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic"
-				xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
-						urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd
-						urn:mace:shibboleth:2.0:afp:mf:saml classpath:/schema/shibboleth-2.0-afp-mf-saml.xsd">
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
 <!--  Release the transient ID to anyone -->
-<afp:AttributeFilterPolicy id="releaseTransientIdToAnyone">
-	<afp:PolicyRequirementRule xsi:type="basic:ANY" />
+<AttributeFilterPolicy id="releaseTransientIdToAnyone">
+	<PolicyRequirementRule xsi:type="ANY" />
 
-	<afp:AttributeRule attributeID="transientId">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="transientId">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+</AttributeFilterPolicy>
 
-</afp:AttributeFilterPolicy>
+
+
 
 <!-- EPTID FILTER PLACEHOLDER -->
 
-<!-- entity-category-sfs-1993-1153 -->
-<afp:AttributeFilterPolicy id="entity-category-sfs-1993-1153">
-	<afp:PolicyRequirementRule xsi:type="saml:EntityAttributeExactMatch"
-			attributeName="http://macedir.org/entity-category"
-			attributeValue="http://www.swamid.se/category/sfs-1993-1153" />
-
-	<afp:AttributeRule attributeID="norEduPersonNIN">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-
-</afp:AttributeFilterPolicy>
 
 
 <!-- GEANT Dataprotection Code of Conduct -->
-<afp:AttributeFilterPolicy id="releaseToCoC">
-	<afp:PolicyRequirementRule xsi:type="saml:EntityAttributeExactMatch"
+<AttributeFilterPolicy id="releaseToCoCo">
+	<PolicyRequirementRule xsi:type="EntityAttributeExactMatch"
 		attributeName="http://macedir.org/entity-category"
 		attributeValue="http://www.geant.net/uri/dataprotection-code-of-conduct/v1" />
 
-	<afp:AttributeRule attributeID="displayName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="email">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="eduPersonPrincipalName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="eduPersonScopedAffiliation">
-		<afp:PermitValueRule xsi:type="basic:OR">
-			<basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true" />
-		</afp:PermitValueRule>
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="schacHomeOrganization">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-</afp:AttributeFilterPolicy>
+	<AttributeRule attributeID="displayName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="email">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="eduPersonPrincipalName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="eduPersonScopedAffiliation">
+		<PermitValueRule xsi:type="OR">
+			<Rule xsi:type="Value" value="faculty" ignoreCase="true" />
+			<Rule xsi:type="Value" value="student" ignoreCase="true" />
+			<Rule xsi:type="Value" value="staff" ignoreCase="true" />
+			<Rule xsi:type="Value" value="alum" ignoreCase="true" />
+			<Rule xsi:type="Value" value="member" ignoreCase="true" />
+			<Rule xsi:type="Value" value="affiliate" ignoreCase="true" />
+			<Rule xsi:type="Value" value="employee" ignoreCase="true" />
+			<Rule xsi:type="Value" value="library-walk-in" ignoreCase="true" />
+		</PermitValueRule>
+	</AttributeRule>
+	<AttributeRule attributeID="schacHomeOrganization">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+</AttributeFilterPolicy>
+
+
 
 
 <!-- REFEDS Research and Schoolarship -->
-<afp:AttributeFilterPolicy id="releaseToRandS">
-	<afp:PolicyRequirementRule xsi:type="saml:EntityAttributeExactMatch"
+<AttributeFilterPolicy id="releaseToRandS">
+	<PolicyRequirementRule xsi:type="EntityAttributeExactMatch"
 		attributeName="http://macedir.org/entity-category"
 		attributeValue="http://refeds.org/category/research-and-scholarship" />
 
-	<afp:AttributeRule attributeID="displayName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="givenName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="surname">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="email">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="eduPersonPrincipalName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
-	<afp:AttributeRule attributeID="eduPersonScopedAffiliation">
-		<afp:PermitValueRule xsi:type="basic:OR">
-			<basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true" />
-		</afp:PermitValueRule>
-	</afp:AttributeRule>
-</afp:AttributeFilterPolicy>
+	<AttributeRule attributeID="displayName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="givenName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="surname">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="email">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="eduPersonPrincipalName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="eduPersonScopedAffiliation">
+		<PermitValueRule xsi:type="OR">
+			<Rule xsi:type="Value" value="faculty" ignoreCase="true" />
+			<Rule xsi:type="Value" value="student" ignoreCase="true" />
+			<Rule xsi:type="Value" value="staff" ignoreCase="true" />
+			<Rule xsi:type="Value" value="alum" ignoreCase="true" />
+			<Rule xsi:type="Value" value="member" ignoreCase="true" />
+			<Rule xsi:type="Value" value="affiliate" ignoreCase="true" />
+			<Rule xsi:type="Value" value="employee" ignoreCase="true" />
+			<Rule xsi:type="Value" value="library-walk-in" ignoreCase="true" />
+		</PermitValueRule>
+	</AttributeRule>
+</AttributeFilterPolicy>
+
+
 
 
 <!-- entity-category-research-and-education -->
-<afp:AttributeFilterPolicy id="entity-category-research-and-education">
-	<afp:PolicyRequirementRule xsi:type="basic:AND">
-		<basic:Rule xsi:type="basic:OR">
-			<basic:Rule xsi:type="saml:EntityAttributeExactMatch"
+<AttributeFilterPolicy id="entity-category-research-and-education">
+	<PolicyRequirementRule xsi:type="AND">
+		<Rule xsi:type="OR">
+			<Rule xsi:type="EntityAttributeExactMatch"
 				attributeName="http://macedir.org/entity-category"
 				attributeValue="http://www.swamid.se/category/eu-adequate-protection" />
-			<basic:Rule xsi:type="saml:EntityAttributeExactMatch"
+			<Rule xsi:type="EntityAttributeExactMatch"
 				attributeName="http://macedir.org/entity-category"
 				attributeValue="http://www.swamid.se/category/nren-service" />
-			<basic:Rule xsi:type="saml:EntityAttributeExactMatch"
+			<Rule xsi:type="EntityAttributeExactMatch"
 				attributeName="http://macedir.org/entity-category"
 				attributeValue="http://www.swamid.se/category/hei-service" />
-		</basic:Rule>
+		</Rule>
 
-		<basic:Rule xsi:type="saml:EntityAttributeExactMatch"
+		<Rule xsi:type="EntityAttributeExactMatch"
 			attributeName="http://macedir.org/entity-category"
 			attributeValue="http://www.swamid.se/category/research-and-education" />
-	</afp:PolicyRequirementRule>
+	</PolicyRequirementRule>
 
-	<afp:AttributeRule attributeID="givenName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="givenName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="surname">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="surname">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="displayName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="displayName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="commonName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="commonName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="eduPersonPrincipalName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="eduPersonPrincipalName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="eduPersonEntitlement">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="eduPersonEntitlement">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="email">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="email">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="eduPersonScopedAffiliation">
-		<afp:PermitValueRule xsi:type="basic:OR">
-			<basic:Rule xsi:type="basic:AttributeValueString" value="faculty" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="student" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="staff" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="alum" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="member" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="affiliate" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="employee" ignoreCase="true" />
-			<basic:Rule xsi:type="basic:AttributeValueString" value="library-walk-in" ignoreCase="true" />
-		</afp:PermitValueRule>
-	</afp:AttributeRule>
+	<AttributeRule attributeID="eduPersonScopedAffiliation">
+		<PermitValueRule xsi:type="OR">
+			<Rule xsi:type="Value" value="faculty" ignoreCase="true" />
+			<Rule xsi:type="Value" value="student" ignoreCase="true" />
+			<Rule xsi:type="Value" value="staff" ignoreCase="true" />
+			<Rule xsi:type="Value" value="alum" ignoreCase="true" />
+			<Rule xsi:type="Value" value="member" ignoreCase="true" />
+			<Rule xsi:type="Value" value="affiliate" ignoreCase="true" />
+			<Rule xsi:type="Value" value="employee" ignoreCase="true" />
+			<Rule xsi:type="Value" value="library-walk-in" ignoreCase="true" />
+		</PermitValueRule>
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="organizationName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="organizationName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="norEduOrgAcronym">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="norEduOrgAcronym">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="countryName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="countryName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="friendlyCountryName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="friendlyCountryName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="schacHomeOrganization">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="schacHomeOrganization">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-</afp:AttributeFilterPolicy>
+</AttributeFilterPolicy>
 
 
-<!-- release norEduPersonNIN to antagning.se -->
-<afp:AttributeFilterPolicy id="studeraNU">
-	<afp:PolicyRequirementRule xsi:type="basic:OR">
-		<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://www.antagning.se/aws-sp" />
-		<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://www.antagning.se/ecs-sp" />
-		<basic:Rule xsi:type="basic:AttributeRequesterString" value="https://www.universityadmissions.se/aws-sp-en" />
-	</afp:PolicyRequirementRule>
 
-	<afp:AttributeRule attributeID="norEduPersonNIN">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
 
-</afp:AttributeFilterPolicy>
+<!-- entity-category-sfs-1993-1153 -->
+<AttributeFilterPolicy id="entity-category-sfs-1993-1153">
+	<PolicyRequirementRule xsi:type="EntityAttributeExactMatch"
+			attributeName="http://macedir.org/entity-category"
+			attributeValue="http://www.swamid.se/category/sfs-1993-1153" />
+
+	<AttributeRule attributeID="norEduPersonNIN">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+
+</AttributeFilterPolicy>
+
+
+
+
+<!-- Examples of entityId based release to Service Providers -->
 
 
 <!-- Release to testshib.org -->
-<afp:AttributeFilterPolicy id="testShib">
-	<afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+<!--
+<AttributeFilterPolicy id="testShib">
+	<PolicyRequirementRule xsi:type="Requester" value="https://sp.testshib.org/shibboleth-sp" />
 
-	<afp:AttributeRule attributeID="givenName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="givenName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="commonName">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="commonName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="surname">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="surname">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-	<afp:AttributeRule attributeID="principal">
-		<afp:PermitValueRule xsi:type="basic:ANY" />
-	</afp:AttributeRule>
+	<AttributeRule attributeID="principal">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
 
-</afp:AttributeFilterPolicy>
+</AttributeFilterPolicy>
+-->
+
+
+
+
+<!-- NyA-webben UHR -->
+<!--
+<AttributeFilterPolicy id="releaseNyAwebbenEntitlement">
+	<PolicyRequirementRule xsi:type="OR">
+		<Rule xsi:type="AttributeRequesterString" value="https://expert.antagning.se/ecs-sp" />
+		<Rule xsi:type="AttributeRequesterString" value="https://expert.testa.antagning.se/ecs-sp" />
+		<Rule xsi:type="AttributeRequesterString" value="https://expert.testb.antagning.se/ecs-sp" />
+	</PolicyRequirementRule>
+
+	<AttributeRule attributeID="NyAwebbenEntitlement">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+</AttributeFilterPolicy>
+-->
+
+
+
+
+<!--  New TCS Personal -->
+<!--
+<AttributeFilterPolicy id="releaseTcsPersonalEntitlement">
+	<PolicyRequirementRule xsi:type="AttributeRequesterString" value="https://www.digicert.com/sso" />
+
+	<AttributeRule attributeID="displayName">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="eduPersonPrincipalName">
+		<PermitValueRule xsi:type="ANY"/>
+	</AttributeRule>
+	<AttributeRule attributeID="tcsPersonalEntitlement">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="email">
+		<PermitValueRule xsi:type="ANY" />
+	</AttributeRule>
+	<AttributeRule attributeID="schacHomeOrganization">
+		<PermitValueRule xsi:type="ANY"/>
+	</AttributeRule>
+</AttributeFilterPolicy>
+-->
+
+
 
 
 <!-- PLACEHOLDER DO NOT REMOVE -->
-</afp:AttributeFilterPolicyGroup>
+</AttributeFilterPolicyGroup>

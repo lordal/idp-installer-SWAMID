@@ -1,3 +1,4 @@
+    <!-- IdP-Installer: This connector relies on global.xml for the Managed connection to the db -->
     <resolver:DataConnector id="StoredId"
             xsi:type="StoredId"
             xmlns="urn:mace:shibboleth:2.0:resolver:dc"
@@ -5,11 +6,7 @@
             sourceAttributeID="uid"
             salt="Large_Random_Salt_Value">
        <resolver:Dependency ref="uid" />
-       <ApplicationManagedConnection
-            jdbcDriver="com.mysql.jdbc.Driver"
-            jdbcURL="jdbc:mysql://127.0.0.1:3306/shibboleth?autoReconnect=true&amp;localSocketAddress=127.0.0.1&amp;connectTimeout=1800&amp;initialTimeout=2&amp;logSlowQueries=true&amp;autoReconnectForPools=true"
-            jdbcUserName="shibboleth"
-            jdbcPassword="SqLpAsSwOrD" />
+       
+            <dc:BeanManagedConnection>MyGlobalDataSource</dc:BeanManagedConnection>
+
     </resolver:DataConnector>
-
-

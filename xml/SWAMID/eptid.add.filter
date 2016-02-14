@@ -1,10 +1,8 @@
-    <afp:AttributeFilterPolicy id="releasePermanentIdToAnyone">
-       <afp:PolicyRequirementRule xsi:type="basic:ANY" />
-       <afp:AttributeRule attributeID="persistentId">
-          <afp:PermitValueRule xsi:type="basic:ANY" />
-       </afp:AttributeRule>
-       <afp:AttributeRule attributeID="eduPersonTargetedID">
-          <afp:PermitValueRule xsi:type="basic:ANY" />
-       </afp:AttributeRule>
-    </afp:AttributeFilterPolicy>
+    <AttributeFilterPolicy id="releasePermanentIdToAnyone">
+       <PolicyRequirementRule xsi:type="ANY" />
+       <!-- Jan 2016: as of Shib3.2.1 persistentId is automatically released and processed in saml-nameid.xml -->
 
+       <AttributeRule attributeID="eduPersonTargetedID">
+          <PermitValueRule xsi:type="ANY" />
+       </AttributeRule>
+    </AttributeFilterPolicy>

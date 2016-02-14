@@ -4,14 +4,10 @@
     Deployers should refer to the Shibboleth documentation for a complete list of components and their options.
     Reference: https://wiki.shibboleth.net/confluence/display/IDP30/AttributeFilterConfiguration
 -->
-<afp:AttributeFilterPolicyGroup id="ShibbolethFilterPolicy" 
-                            xmlns:afp="urn:mace:shibboleth:2.0:afp"
-                            xmlns:basic="urn:mace:shibboleth:2.0:afp:mf:basic" 
-                            xmlns:saml="urn:mace:shibboleth:2.0:afp:mf:saml"
-                            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                            xsi:schemaLocation="urn:mace:shibboleth:2.0:afp classpath:/schema/shibboleth-2.0-afp.xsd
-                                                urn:mace:shibboleth:2.0:afp:mf:basic classpath:/schema/shibboleth-2.0-afp-mf-basic.xsd
-                                                urn:mace:shibboleth:2.0:afp:mf:saml classpath:/schema/shibboleth-2.0-afp-mf-saml.xsd">
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
 
 <!-- ##########################################
 #
@@ -24,14 +20,14 @@
 #   Reference: https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf ,section 8.3.8
 #   other references: https://wiki.shibboleth.net/confluence/display/SHIB2/IdPNameIdentifier
 -->
-    <afp:AttributeFilterPolicy id="CAF-IdPInstaller-CAFPolicyReleaseTransientIdToAnyone">
+    <AttributeFilterPolicy id="CAF-IdPInstaller-CAFPolicyReleaseTransientIdToAnyone">
 
- <afp:PolicyRequirementRule xsi:type="basic:ANY" />
+ <PolicyRequirementRule xsi:type="ANY" />
 
-        <afp:AttributeRule attributeID="transientId">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-    </afp:AttributeFilterPolicy>
+        <AttributeRule attributeID="transientId">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+    </AttributeFilterPolicy>
 
 
 <!-- ##########################################
@@ -43,16 +39,16 @@
 #      CAF's policy is to release this to any CAF service as additional identifier that services may use 
 #      and preserve the end users privacy at the same time.
 -->
-<afp:AttributeFilterPolicy id="CAF-IdPInstaller-CAFPolicyReleaseEptidToCAF">
+<AttributeFilterPolicy id="CAF-IdPInstaller-CAFPolicyReleaseEptidToCAF">
  
     <!-- Policy requirement rule indicates this policy is active for any request -->
-     <afp:PolicyRequirementRule xsi:type="basic:ANY" />
+     <PolicyRequirementRule xsi:type="ANY" />
 
-    <afp:AttributeRule attributeID="eduPersonTargetedID">
-               <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
+    <AttributeRule attributeID="eduPersonTargetedID">
+               <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
 
-</afp:AttributeFilterPolicy>
+</AttributeFilterPolicy>
 
 <!-- ##########################################
 #
@@ -62,46 +58,46 @@
 #                   The list is long to allow IdP operators to see if their mappings are working
 #
 -->
-<afp:AttributeFilterPolicy id="CAF-IdPInstaller-validator-caftest-canarie-ca">
-    <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://validator.caftest.canarie.ca/shibboleth" />
+<AttributeFilterPolicy id="CAF-IdPInstaller-validator-caftest-canarie-ca">
+    <PolicyRequirementRule xsi:type="Requester" value="https://validator.caftest.canarie.ca/shibboleth" />
         
-        <afp:AttributeRule attributeID="eduPersonTargetedID">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="eduPersonPrincipalName">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="email">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule> 
-        <afp:AttributeRule attributeID="cn">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="surname">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="mail">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="givenName">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="eduPersonAffiliation">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="displayName">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="eduPersonEntitlement">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="preferredLanguage">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-</afp:AttributeFilterPolicy>
+        <AttributeRule attributeID="eduPersonTargetedID">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonPrincipalName">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="email">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule> 
+        <AttributeRule attributeID="cn">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="surname">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="mail">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="givenName">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonScopedAffiliation">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonAffiliation">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="displayName">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonEntitlement">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="preferredLanguage">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+</AttributeFilterPolicy>
 
 
 <!-- ##########################################
@@ -113,55 +109,55 @@
 #                   https://tts.canarie.ca/otrs/public.pl?Action=PublicFAQZoom;ItemID=22;
 #
 -->  
-<afp:AttributeFilterPolicy id="CAF-IdPInstaller-CANARIE-services-canarie-ca">
-        <afp:PolicyRequirementRule xsi:type="basic:OR">
-                <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://collaboration.canarie.ca/shibboleth"/>
-                <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://science.canarie.ca/shibboleth"/>
-		        <basic:Rule xsi:type="basic:AttributeRequesterString" value="http://adfsgw.canarie.ca/adfs/services/trust"/>
-	            <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://tts.canarie.ca/shibboleth"/>
-                <basic:Rule xsi:type="basic:AttributeRequesterString" value="https://tools.canarie.ca/shibboleth"/>
-    </afp:PolicyRequirementRule>
+<AttributeFilterPolicy id="CAF-IdPInstaller-CANARIE-services-canarie-ca">
+        <PolicyRequirementRule xsi:type="OR">
+                <Rule xsi:type="Requester" value="https://collaboration.canarie.ca/shibboleth"/>
+                <Rule xsi:type="Requester" value="https://science.canarie.ca/shibboleth"/>
+		        <Rule xsi:type="Requester" value="http://adfsgw.canarie.ca/adfs/services/trust"/>
+	            <Rule xsi:type="Requester" value="https://tts.canarie.ca/shibboleth"/>
+                <Rule xsi:type="Requester" value="https://tools.canarie.ca/shibboleth"/>
+    </PolicyRequirementRule>
 	
-	<afp:AttributeRule attributeID="eduPersonTargetedID">
-        	<afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="eduPersonPrincipalName">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-	   <afp:AttributeRule attributeID="mail">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule> 
-	   <afp:AttributeRule attributeID="email">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule> 
-	   <afp:AttributeRule attributeID="cn">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="surname">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="mail">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="givenName">
-                <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="eduPersonScopedAffiliation">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-        <afp:AttributeRule attributeID="eduPersonAffiliation">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-	   <afp:AttributeRule attributeID="displayName">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-	   <afp:AttributeRule attributeID="eduPersonEntitlement">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-	   <afp:AttributeRule attributeID="preferredLanguage">
-                 <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
-</afp:AttributeFilterPolicy>
+	<AttributeRule attributeID="eduPersonTargetedID">
+        	<PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonPrincipalName">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+	   <AttributeRule attributeID="mail">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule> 
+	   <AttributeRule attributeID="email">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule> 
+	   <AttributeRule attributeID="cn">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="surname">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="mail">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="givenName">
+                <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonScopedAffiliation">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+        <AttributeRule attributeID="eduPersonAffiliation">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+	   <AttributeRule attributeID="displayName">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+	   <AttributeRule attributeID="eduPersonEntitlement">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+	   <AttributeRule attributeID="preferredLanguage">
+                 <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
+</AttributeFilterPolicy>
 
 <!-- ##########################################
 #
@@ -171,21 +167,21 @@
 #                   email tickets@canarie.ca requesting access for your eduroam administrator
 #
 -->  
-<afp:AttributeFilterPolicy id="CAF-IdPInstaller-EnableAccessFor-cat-eduroam-org">
-        <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://monitor.eduroam.org/sp/module.php/saml/sp/metadata.php/default-sp" />
-    <afp:AttributeRule attributeID="eduPersonPrincipalName">
-        <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-    <afp:AttributeRule attributeID="eduPersonTargetedID">
-        <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-    <afp:AttributeRule attributeID="cn">
-        <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-    <afp:AttributeRule attributeID="email">
-        <afp:PermitValueRule xsi:type="basic:ANY" />
-    </afp:AttributeRule>
-</afp:AttributeFilterPolicy>
+<AttributeFilterPolicy id="CAF-IdPInstaller-EnableAccessFor-cat-eduroam-org">
+        <PolicyRequirementRule xsi:type="Requester" value="https://monitor.eduroam.org/sp/module.php/saml/sp/metadata.php/default-sp" />
+    <AttributeRule attributeID="eduPersonPrincipalName">
+        <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="eduPersonTargetedID">
+        <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="cn">
+        <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="email">
+        <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+</AttributeFilterPolicy>
 
 <!-- ##########################################
 #
@@ -195,17 +191,17 @@
 #   
 #   Notes: This policy is in place, but requires the testshib section to be uncommented in relying-party.xml to fully work.
 -->
-<afp:AttributeFilterPolicy id="CAF-IdPInstaller-testshib">
-    <afp:PolicyRequirementRule xsi:type="basic:AttributeRequesterString" value="https://sp.testshib.org/shibboleth-sp" />
+<AttributeFilterPolicy id="CAF-IdPInstaller-testshib">
+    <PolicyRequirementRule xsi:type="Requester" value="https://sp.testshib.org/shibboleth-sp" />
         
-    <afp:AttributeRule attributeID="eduPersonTargetedID">
-            <afp:PermitValueRule xsi:type="basic:ANY" />
-        </afp:AttributeRule>
+    <AttributeRule attributeID="eduPersonTargetedID">
+            <PermitValueRule xsi:type="ANY" />
+        </AttributeRule>
 
-</afp:AttributeFilterPolicy>
+</AttributeFilterPolicy>
 
 
 
 <!-- EPTID FILTER PLACEHOLDER -->
 
-</afp:AttributeFilterPolicyGroup>
+</AttributeFilterPolicyGroup>

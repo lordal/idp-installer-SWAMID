@@ -13,7 +13,7 @@
 #       perform Shib v3 secret Key roll over
 #               see: https://wiki.shibboleth.net/confluence/display/IDP30/SecretKeyManagement   
 
-JAVA_HOME=/usr/java/default 
+export JAVA_HOME=/usr/java/default 
 
 APPROOT="/opt/idp-installer"
 APPBIN="${APPROOT}/bin"

@@ -17,10 +17,14 @@
 // You should have received a copy of the GNU General Public License
 // along with IDP-Deployer. If not, see <http://www.gnu.org/licenses/>.
 // Set the value below to 1 to enable the logging which will include javascript console and alert popups.
-var loggingEnabled = 2;
+var loggingEnabled = 1;
 
 var generatorVersion = 'v30';
 var builddate = new Date();
+
+
+var federationMonitoringString="205.189.33.23/32 2001:410:102:1::23/128 205.189.33.55/32 2001:410:102:1::55/128";
+var defaultFederationMonitoringString="127.0.0.1/32 ::1/128";
 
 if (loggingEnabled > 1) {
     console.log('GeneratorVersion' + generatorVersion);
@@ -44,6 +48,35 @@ function duplicateContactInfo() {
     }
     update(); // update to ensure the configuration is constructed properly.
 
+}
+
+function setiprangesallowed() {
+        // duplicate information to fields below
+
+        $("#iprangesallowed").val($("#iprangesallowedAdjust").val());
+        update(); // update to ensure the configuration is constructed properly.
+
+}
+
+function setLDAPFieldDefaults () {
+   // alert (($("#ldap_type").val() ))
+    if ( ($("#ldap_type").val() ) == 'ad' ) {
+    
+    console.log('setLDAPFieldDefaults:detected Active Directory');
+    if (confirm ("Active Directory defaults are to use sAMAccountName for search filters, override what's there now?") ){
+        $("#attr_filter").val("sAMAccountName");
+        $("#user_field").val("sAMAccountName");
+        }
+
+    }
+    else
+    {
+    console.log('setLDAPFieldDefaults:detected Regular Directory');
+    if (confirm ("LDAP search defaults are to use uid for search filters, override what's there now?") ){
+        $("#attr_filter").val("uid");
+        $("#user_field").val("uid");
+        }
+    }
 
 }
 
@@ -188,7 +221,8 @@ function importPreviousSettings() {
 var suppressedImportKeys = {
     "installer_section0_version": 0,
     "installer_section0_builddate": 0,
-    "installer_section0_fingerprint": 0
+    "installer_section0_fingerprint": 0,
+    "appserv": 0
 };
 
 
@@ -258,6 +292,8 @@ var requiredFieldKeysShibboleth = {
       "certLongC": 0,
       "selfsigned": 0,
       "consentEnabled": 0,
+      "ECPEnabled": 0,
+      "iprangesallowed": 0,
 
     "freeRADIUS_svr_country": 0,
     "freeRADIUS_svr_state": 0,
@@ -412,6 +448,9 @@ var cNeutral = "#FFFFFF"
 
         update();
     }
+
+
+
 
 
     function update() {
@@ -679,6 +718,9 @@ output += "certAcro=\'"+ $("#certAcro").val()+ "\'\n";
 output += "certLongC=\'"+ $("#certLongC").val()+ "\'\n";
 output += "selfsigned=\'"+ $("#selfsigned").val()+ "\'\n";
 output += "consentEnabled=\'"+ $("#consentEnabled").val()+ "\'\n";
+output += "ECPEnabled=\'"+ $("#ECPEnabled").val()+ "\'\n";
+output += "iprangesallowed=\'"+ $("#iprangesallowed").val()+ "\'\n";
+
 output += "SWAMIDcertChain=\'"+ $("#SWAMIDcertChain").val()+ "\'\n";
 
 output += "my_eduroamDomain=\'"+ $("#my_eduroamDomain").val()+ "\'\n";

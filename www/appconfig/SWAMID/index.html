@@ -163,7 +163,7 @@
                                               
                                               <input id="ida_component_shibboleth" 
                                               onclick="refreshComponentsList();c=cFilled;if (this.checked==true){c=cNeeded}else {c=cNeutral} setDependantFieldColours(c,requiredFieldKeysShibboleth);" 
-                                              type="checkbox" name="ida_component_shibboleth" value="on" checked />
+                                              type="checkbox" name="ida_component_shibboleth" value="on" />
                                             </td>
                                           </tr>
                                           <tr><td><hr></td></tr>
@@ -809,6 +809,13 @@ installer_section2_title:
      </div>
      </div>
      </div>
+<script type="text/javascript">
+$("#ida_component_shibboleth").prop("checked", true);
+$("#installer_section0_buildComponentList").val("shibboleth");
+//requiredFieldKeysShibboleth[] = 1;
+update();
+</script>
+
      </body>
      </html>
       

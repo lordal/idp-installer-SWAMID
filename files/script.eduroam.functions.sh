@@ -392,14 +392,12 @@ displayMainMenu() {
 
 
                                         echo "install of Federated SSO chosen, creating Restore Point" >> ${statusFile} 2>&1
-
-                                        # FIXME: REDUNDANT? --> softwareInstallMaven
-
-                                        doInstallFedSSO
-
-                                        createRestorePoint
+						         		createRestorePoint
+                                        
                                         echo "Restore Point Completed" >> ${statusFile} 2>&1
-                                #       eval ${redhatCmdFedSSO}
+                               
+                                 		doInstallFedSSO
+                               
                                         echo "Update Completed" >> ${statusFile} 2>&1
 
                         else

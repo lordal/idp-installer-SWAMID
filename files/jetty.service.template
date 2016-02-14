@@ -1,0 +1,36 @@
+#
+# A basic systemd configuration for Jetty to start on boot 
+# 
+# Uses the Service scenario of 'oneshot' run as root
+# and once the process has run, it is considered successful
+# regardless of error code (even 'FAILURE') as jetty
+# may take longer to start than jetty.sh observes it's logs 
+# for.  
+#
+#
+
+[Unit]
+Description=Jetty Web Application Server
+After=network.target
+
+[Install]
+WantedBy=multi-user.target
+Alias=jetty.service
+ 
+[Service]
+Type=oneshot
+
+# Execute pre and post scripts as root
+PermissionsStartOnly=true
+
+# The process will be considered active after it exits
+RemainAfterExit=yes
+
+# Note on the Start we do not wait for successful start.
+# This is to allow the container to run beyond the jetty shell script
+# in cases where it takes very long to start and results in jetty.sh
+# reporting FAILED.  It's a false positive on failure.
+
+ExecStart=-/opt/jetty/bin/jetty.sh start
+ExecStop=/opt/jetty/bin/jetty.sh stop
+ExecReload=/opt/jetty/bin/jetty.sh restart 

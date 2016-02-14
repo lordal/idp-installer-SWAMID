@@ -92,17 +92,19 @@ Please see: ~/docs/README.<federation_name> for federation specific usage
 Profile of installed software 
 -------------------------------------------------------------------------------
 SAML2 Uses:
-      jetty-9.2.13
-      shibboleth-identityprovider-3.1.2
+      jetty-9.2.14
+      shibboleth-identityprovider-3.2.0
       cas-client-3.3.3-release
       mysql-connector-java-5.1.35 (for EPTID)
+      mysql DB 5.6 Community Release
 
 
 
 eduroam uses:
-      freeRADIUS-2.1.12
-      samba-3.6.9 (to connect to AD for MS-CHAPv2)
+      freeRADIUS-3.0.1
+      samba-4.1.1 (to connect to AD for MS-CHAPv2)
 
+A detailed view of the versions and various components: http://bit.ly/idpInstaller3-SoftwareProfile
 
 Disclamer
 -------------------------------------------------------------------------------

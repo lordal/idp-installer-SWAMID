@@ -252,26 +252,32 @@ EOM
 
 guessLinuxDist() {
 	lsbBin=`which lsb_release 2>/dev/null`
-	if [ -x "${lsbBin}" ]; then
+	if [ -x "${lsbBin}" ]
+	then
 		dist=`lsb_release -i 2>/dev/null | cut -d':' -f2 | sed -re 's/^\s+//g'`
 	fi
 
-	if [ ! -z "`${Echo} ${dist} | grep -i 'ubuntu' | grep -v 'grep'`" ]; then
+	if [ ! -z "`${Echo} ${dist} | grep -i 'ubuntu' | grep -v 'grep'`" ]
+	then
 		dist="ubuntu"
 	elif [ ! -z "`${Echo} ${dist} | grep -i 'suse' | grep -v 'grep'`" ]; then
 		dist="sles"
 	elif [ -s "/sbin/yast" ]; then
 		dist="sles"
-	elif [ ! -z "`${Echo} ${dist} | grep -i 'redhat' | grep -v 'grep'`" ]; then
+	elif [ ! -z "`${Echo} ${dist} | grep -i 'redhat' | grep -v 'grep'`" ]
+	then
 		dist="redhat"
-	elif [ -s "/etc/centos-release" ]; then
+	elif [ -s "/etc/centos-release" ]
+	then
 		dist="centos"
-	elif [ -s "/etc/redhat-release" ]; then
+	elif [ -s "/etc/redhat-release" ]
+	then
 		dist="redhat"
 	else
 		really=$(askYesNo "Distribution" "Can not guess linux distribution, procede assuming debian(ish)?")
 
-		if [ "${really}" != "n" ]; then
+		if [ "${really}" != "n" ]
+		then
 			dist="ubuntu"
 		else
 			cleanBadInstall
@@ -280,7 +286,6 @@ guessLinuxDist() {
 }
 
 setDistCommands() {
-
         if [ ${dist} = "ubuntu" ]; then
 		redhatDist="none"
 		debianDist=`cat /etc/issue.net | awk -F' ' '{print $2}'  | cut -d. -f1`
@@ -288,7 +293,7 @@ setDistCommands() {
                 distCmdUa=${ubuntuCmdUa}
                 distCmd1=${ubuntuCmd1}
                 distCmd2=${ubuntuCmd2}
-                distCmd3=${ubuntuCmd3}
+				#Deprecated:2016-12-22:TODO:remove next release #distCmd3=${ubuntuCmd3}
                 distCmd4=${ubuntuCmd4}
                 distCmd5=${ubuntuCmd5}
                 tomcatSettingsFile=${tomcatSettingsFileU}
@@ -299,6 +304,8 @@ setDistCommands() {
 		distRadiusGroup=${ubuntuRadiusGroup}
 		templatePathEduroamDist=${templatePathEduroamUbuntu}
 		distEduroamModules=${UbuntuEduroamModules}
+    ${Echo} "Detected OS as Debian based: ${dist}"
+
         elif [ ${dist} = "sles" ]; then
 		redhatDist="none"
 		debianDist=`cat /etc/issue.net | awk -F' ' '{print $2}'  | cut -d. -f1`
@@ -306,7 +313,7 @@ setDistCommands() {
                 distCmdUa=${slesCmdUa}
                 distCmd1=${slesCmd1}
                 distCmd2=${slesCmd2}
-                distCmd3=${slesCmd3}
+		#Deprecated:2016-12-22:TODO:remove next release# distCmd3=${slesCmd3}
                 distCmd4=${slesCmd4}
                 distCmd5=${slesCmd5}
                 tomcatSettingsFile=${tomcatSettingsFileS}
@@ -317,6 +324,8 @@ setDistCommands() {
 		distRadiusGroup=${slesRadiusGroup}
 		templatePathEduroamDist=${templatePathEduroamSles}
 		distEduroamModules=${SlesEduroamModules}
+		${Echo} "Detected OS as SUSE based: ${dist}"
+
         elif [ ${dist} = "centos" -o "${dist}" = "redhat" ]; then
                 if [ ${dist} = "centos" ]; then
 			redhatDist=`rpm -q centos-release | awk -F'-' '{print $3}'`
@@ -325,7 +334,7 @@ setDistCommands() {
                         distCmdUa=${centosCmdUa}
                         distCmd1=${centosCmd1}
                         distCmd2=${centosCmd2}
-                        distCmd3=${centosCmd3}
+                        #Deprecated:2016-12-22:TODO:remove next release# distCmd3=${centosCmd3}
                         distCmd4=${centosCmd4}
                         distCmd5=${centosCmd5}
                         dist_install_nc=${centos_install_nc}
@@ -346,7 +355,7 @@ setDistCommands() {
                         distCmdU=${redhatCmdU}
                         distCmd1=${redhatCmd1}
                         distCmd2=${redhatCmd2}
-                        distCmd3=${redhatCmd3}
+                        #Deprecated:2016-12-22:TODO:remove next release #distCmd3=${redhatCmd3}
                         distCmd4=${redhatCmd4}
                         distCmd5=${redhatCmd5}
                         dist_install_nc=${redhat_install_nc}
@@ -402,6 +411,16 @@ validateConnectivity()
 	elo "$dist_install_nc"
 	elo "$dist_install_netstat"
 	elo "$dist_install_ldaptools"
+
+	${Echo} "Updating repositories and installing generic dependencies"
+	#${Echo} "Live logging can be seen by this command in another window: tail -f ${statusFile}"
+	elo "${distCmdU}"
+	elo "${distCmd1}"
+	#eval ${distCmdU} &> >(tee -a ${statusFile}) 
+	#eval ${distCmd1} &> >(tee -a ${statusFile})
+	elo "${Echo} Done Updating repositories and basic tools"
+
+	
 
 	##############################
 	# ntp server check
@@ -545,14 +564,20 @@ validateConnectivity()
 		##############################
 		# bind LDAP user
 		##############################
+		#
+		# note that we need to monkey around with the TLS vis-a-vis the LDAP server to avoid validating the unsigned cert
+		# in order to claim we can reach it.  The preflight test is done as a simple one to ensure the credentials are correct
+		# The certificate used will be loaded into the java keystore. 
+		# We may want to rethink the next few lines to see if we need to remove them to have the machine properly configured
+		# for both commandline AND applications (apps use the java keystore) 
 		elo "${Echo} LDAP bind checking...(might take few minutes)"
 		if [ -z "`grep 'TLS_REQCERT' /root/.ldaprc 2>/dev/null`" ]; then
 			${Echo} "TLS_REQCERT ALLOW" >> /root/.ldaprc
 		fi
 		ldapBaseDN=`echo ${ldapbinddn} | cut -d, -f2-`
 		ldapSearchValue=`echo ${ldapbinddn} | cut -d, -f1`
-		${Echo} "ldapsearch -vvv -H ldaps://$server -D \"${ldapbinddn}\" -b \"${ldapBaseDN}\" -x -w \"<removed>\" \"${ldapSearchValue}\"" >> ${statusFile}
-		ldapsearch -vvv -H ldaps://$server -D "${ldapbinddn}" -b "${ldapBaseDN}" -x -w "${ldappass}" "${ldapSearchValue}" &>> ${statusFile}
+		${Echo} "export LDAPTLS_REQCERT=never; ldapsearch -vvv -H ldaps://$server -D \"${ldapbinddn}\" -b \"${ldapBaseDN}\" -x -w \"<removed>\" \"${ldapSearchValue}\"" >> ${statusFile}
+		export LDAPTLS_REQCERT=never; ldapsearch -vvv -H ldaps://$server -D "${ldapbinddn}" -b "${ldapBaseDN}" -x -w "${ldappass}" "${ldapSearchValue}" &>> ${statusFile}
 		if [ $? == "0" ]; then
 			elo "${Echo} ldap bind - - - - ok"
 			LDAP="ok"

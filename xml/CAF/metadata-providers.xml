@@ -12,20 +12,20 @@
                         
 <!-- Begin: CAF Production aggregates       -->
          <MetadataProvider id="URLMD" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-                         metadataURL="https://caf-shib2ops.ca/CoreServices/caf_metadata_signed_sha256.xml"
+                         metadataURL="http://caf-shib2ops.ca/CoreServices/caf_metadata_signed_sha256.xml"
                          backingFile="/opt/shibboleth-idp/metadata/caf_metadata_signed.xml"
              maxRefreshDelay="PT1H">
-                    <MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata" requireSignedMetadata="true" 
+                    <MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata" requireSignedRoot="true" 
                             certificateFile="/opt/shibboleth-idp/credentials/md-signer.crt"/>
          </MetadataProvider>
 
          <!-- CAF eduGAIN downstream feed (needed in order to write policies against entities). -->
      <!-- Your technical contact needs to opt-in your entity by emailing tickets@canarie.ca -->
           <MetadataProvider id="URLMDCAFEdugain" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-                         metadataURL="https://caf-shib2ops.ca/CoreServices/caf_interfed_signed.xml"
+                         metadataURL="http://caf-shib2ops.ca/CoreServices/caf_interfed_signed.xml"
                          backingFile="/opt/shibboleth-idp/metadata/caf_interfed_signed.xml"
              maxRefreshDelay="PT1H">
-                 <MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata" requireSignedMetadata="true" 
+                 <MetadataFilter xsi:type="SignatureValidation" xmlns="urn:mace:shibboleth:2.0:metadata" requireSignedRoot="true" 
                             certificateFile="/opt/shibboleth-idp/credentials/md-signer.crt"/>
          </MetadataProvider>
 
@@ -37,7 +37,7 @@
      <!-- Note: this aggregate is purposefully unsigned as it is a testbed environment.  Uncomment to begin participating in CAF test fed -->
 <!--
           <MetadataProvider id="URLMDCAFTestbed" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-                         metadataURL="https://caf-shib2ops.ca/CoreServices/testbed/caf_test_fed_unsigned.xml"
+                         metadataURL="http://caf-shib2ops.ca/CoreServices/testbed/caf_test_fed_unsigned.xml"
                          backingFile="/opt/shibboleth-idp/metadata/caf_test_fed_unsigned.xml"
              maxRefreshDelay="PT1H">
          </MetadataProvider>

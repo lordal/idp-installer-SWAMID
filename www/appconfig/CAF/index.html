@@ -359,7 +359,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
             </td>
           </tr>
           <tr>
-            <td colspan="2">
+            <td colspan="1">
               For eduroam (RADIUS) MSCHAPv2  authentication to work, this machine must join your AD domain.
             </td>
             <td>
@@ -449,7 +449,7 @@ c=cFilled;if (this.checked==true){c=cNeeded}
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="1">
                   FreeRADIUS will behave as both a proxy and server for local clients.
                   <br>
                   A Client can be anything that talks the RADIUS protocol, including other RADIUS servers, access points, laptops, and/or smart phones.
@@ -548,7 +548,7 @@ installer_section3_title:
         </td>
       </tr>
       <tr>
-        <td colspan="2">
+        <td colspan="1">
           eduroam needs TLS for encrypting tunnels between your server and the person authenticating. 
           Please provide details to create a self signed Certificate Authority(CA) and Server certificate.
           <br>
@@ -686,7 +686,7 @@ installer_section3_title:
                 </td>
               </tr>
               <tr>
-                <td colspan="2">
+                <td colspan="1">
                   Federated SSO needs credentials to connect to your Directory for 'find and bind' operations as well as to access data about a user.
                   <br>
                   
@@ -873,12 +873,17 @@ installer_section3_title:
                   <input  style="width: 250px;" id="user_field" type="text" placeholder="e.g. samaccountname" onchange="updateCtx(this)" >
                   <BR>
                  
-                  LDAP released attributes
+             <!--     LDAP released attributes
                   <img id="ldap_attrToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
           rel="tooltip" title="List of LDAP released attributes"
            />
            :                  <input  style="width: 250px;" id="ldap_attr" type="text" placeholder="e.g. cn,mail" onchange="updateCtx(this)" >
                   <BR>
+                 
+                 -->
+               <!-- hidden value of common name for this field -->
+               <input   id="ldap_attr" type="hidden" value="cn" >
+
                   LDAP Subtree search?
 <img id="subsearchToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="Subtree search describes whether or not the entire tree is searched for a user or just that node and no further.  Subtree is recommended unless your directory design requires otherwise."
@@ -981,7 +986,7 @@ installer_section3_title:
                       Enable user consent
 
                       <img id="consentToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
-          rel="tooltip" title="If you enable user consent the user will have to consent."
+          rel="tooltip" title="Enabling user consent will require your users to see a consent screen before services"
            />
                       <select id="consentEnabled"  onchange="updateCtx(this)" >
                         <option name="consentEnabledY" value="y" selected>
@@ -992,6 +997,42 @@ installer_section3_title:
                         </option>
                       </select>
                       <br>
+Enable SAML2 ECP for non-web SSO
+
+                      <img id="ECPToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="ECP(Enhanced Client Proxy) is used for non web SAML flows which includes Microsoft Office365"
+           />
+                      <select id="ECPEnabled"  onchange="updateCtx(this)" >
+                        <option name="ECPEnabledY" value="y" selected>
+                          Yes(recommended)
+                        </option>
+                        <option name="ECPEnabledN" value="n">
+                          No
+                        </option>
+                      </select>
+                      
+ <BR>
+<select id="iprangesallowedAdjust" onchange="return setiprangesallowed()" style="width: 380px;">
+    <option name="iprangesallowed1" value="127.0.0.1/32 ::1/128 205.189.33.23/32 2001:410:102:1::23/128 205.189.33.55/32 2001:410:102:1::55/128" selected>  
+      IP Restrictions to IdP Status Url(Recommended shown) 
+    </option>
+   
+    <option name="iprangesallowed1" value="127.0.0.1/32 ::1/128 205.189.33.23/32 2001:410:102:1::23/128 205.189.33.55/32 2001:410:102:1::55/128" >  
+      add access by localhost and CANARIE (recommended) 
+    </option>
+    <option name="iprangesallowed2" value="127.0.0.1/32 ::1/128" >  
+      Only Limit status URL to localhost
+    </option>
+</select>  
+      <img id="iprangesallowedToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The IdPs url /idp/status provides application health information. Allowed values are a space separated set of IPv4/v6 CIDR format items where a single ip is 1.1.1.1/32 or ::1/128(ipv6 format). Recommended values are to permit localhost, logger.canarie.ca, and monitor.canarie.ca by ipv4/6 addresses"
+           />
+     :
+                  <input  style="width: 550px;" id="iprangesallowed" type="text" placeholder="" onchange="updateCtx(this)" 
+                  value="127.0.0.1/32 ::1/128 205.189.33.23/32 2001:410:102:1::23/128 205.189.33.55/32 2001:410:102:1::55/128">
+                      <br>
+
+<br>
 
                       
                       <!-- google apps support, not supported by CAF, but other federations config may permit it, CAF uses hidden value -->
@@ -1131,7 +1172,7 @@ installer_section2_title:
     
     <hr color="red" size="10">
     <hr>
-    IDP Installer Version 2.6_CAF &copy; 2011-13 
+    IDP Installer Version 3.0.0-CAF &copy; 2011-15 
     
   </form>
  
