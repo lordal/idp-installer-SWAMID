@@ -533,6 +533,9 @@ $(document).ready(function() {            $("[rel='tooltip']").tooltip();     })
         //      if( ($("#idpurl").val())==undefined )
         if ($("#idpurl").val()) {
 
+            var idpTmp = $("#idpurl").val().replace(/\/$/, '');
+	    $("#idpurl").val(idpTmp);
+
             if (loggingEnabled) {
                 console.log('Update():presets: idpurl is:|' + $("#idpurl").val() + '|');
             }

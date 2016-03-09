@@ -34,7 +34,7 @@
     <bean id="shibboleth.DefaultRelyingParty" parent="RelyingParty">
         <property name="profileConfigurations">
             <list>
-                <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true" p:postAuthenticationFlows="attribute-release" />
+                <bean parent="Shibboleth.SSO" p:postAuthenticationFlows="attribute-release" />
                 <ref bean="SAML1.AttributeQuery" />
                 <ref bean="SAML1.ArtifactResolution" />
                 <bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" />
@@ -63,7 +63,22 @@
             </property>
         </bean>
         -->
-        
+	<!--
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="https://ticket.iop.org/shibboleth">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="Shibboleth.SSO" p:includeAttributeStatement="true" p:postAuthenticationFlows="attribute-release" />
+                    <ref bean="SAML1.AttributeQuery" />
+                    <ref bean="SAML1.ArtifactResolution" />
+                    <bean parent="SAML2.SSO" p:postAuthenticationFlows="attribute-release" />
+                    <ref bean="SAML2.ECP" />
+                    <ref bean="SAML2.Logout" />
+                    <ref bean="SAML2.AttributeQuery" />
+                    <ref bean="SAML2.ArtifactResolution" />
+                </list>
+            </property>
+        </bean>
+	-->
     </util:list>
 
 </beans>

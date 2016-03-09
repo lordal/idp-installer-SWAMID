@@ -1,15 +1,8 @@
-70a71,79
-> <rp:RelyingParty id="google.com"
-> 		provider="https://IdPfQdN/idp/shibboleth"
-> 		defaultSigningCredentialRef="IdPCredential">
-> 
-> 	<rp:ProfileConfiguration xsi:type="saml:SAML2SSOProfile"
-> 			encryptAssertions="never"
-> 			encryptNameIds="never" />
-> </rp:RelyingParty>
-> 
-77a87,90
-> <metadata:MetadataProvider id="GoogleMD" xsi:type="FilesystemMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-> 		requireValidMetadata="false"
-> 		metadataFile="/opt/shibboleth-idp/metadata/google.xml" />
-> 
+        <bean parent="RelyingPartyByName" c:relyingPartyIds="google.com">
+            <property name="profileConfigurations">
+                <list>
+                    <bean parent="SAML2.SSO" p:encryptAssertions="false" />
+                    <bean parent="SAML2.SSO" p:encryptNameIDs="false" />
+                </list>
+            </property>
+        </bean>

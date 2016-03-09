@@ -1,6 +1,6 @@
 <!-- Google -->
 <AttributeFilterPolicy id="google">
-<PolicyRequirementRule xsi:type="Requester" value="google.com" />
+	<PolicyRequirementRule xsi:type="Requester" value="google.com" />
 	<AttributeRule attributeID="NameID">
 		<PermitValueRule xsi:type="ANY" />
 	</AttributeRule>

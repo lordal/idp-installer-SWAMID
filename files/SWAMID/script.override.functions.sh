@@ -43,6 +43,9 @@ installCertificates () {
                 cleanBadInstall
         fi
 
+	${Echo} "If you already have a Digicert certificate and key, run the following command:" >> ${messages}
+	${Echo} "openssl pkcs12 -export -in <certificate file> -inkey <key file> -certfile ${certpath}/server.chain -out ${httpsP12} -name container -passout \"pass:${httpspass}\"" >> ${messages}
+
         ${Echo} "Installing certificate chain in java cacert keystore"
 	cnt=1
 	for i in `cat ${certpath}server.chain | sed -re 's/\ /\*\*\*/g'`; do

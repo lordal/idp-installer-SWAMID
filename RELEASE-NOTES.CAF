@@ -8,6 +8,39 @@ from your repository for your OS as well as the necessary certificates.
 
 Branch	Details
 
+3.0.0-CAF-RC5
+		Commit notes:
+			- Latest Shibboleth IdP (3.2.1) is installed and leverages newer saml-nameid settings for persistent and transient id.
+			- Numerous files removed from legacy installation of v2 style installation 
+			- Consent in the IdP is enabled by default
+
+		Version compatibility:
+			This tool is an installer tool and usually only used once to perform an installation.
+			To this end, we recommend for all scenarios to:
+			- make a clone of your environment you are trying to work with and use that as your testing ground
+			- use the latest version of this tool when doing installations.
+
+		
+			If you installed with the 2.x.x-CAF, 3.x.x-CAF-RCx, or standalone Shibboleth 2.x release:
+				- This installer will not upgrade an inplace installation of that install and is something we are working on. 
+				- We recommend a new installation and import your configuration file into the configuration builder 
+				so that you may benefit from the additional features.
+
+			If you have a pre-existing Shibboleth 3.x.x installation:
+				- We recommend working with the latest Shibboleth software itself rather than the installer.
+				- It will detect the existing configuration and provide an attempt at an upgrade.
+
+		Known Issues
+			Documentation that is embedded in this build is for the v2 of the installer and has incorrect testing URLs
+			and incorrect instructions for certificate management.  
+
+			Please see the V3 Installer FAQ: https://tts.canarie.ca/otrs/public.pl?Action=PublicFAQExplorer;CategoryID=17
+
+
+		Please report IdP-Installer related issues to:
+			tickets@canarie.ca 
+		
+
 2.1.0-CAF 
 		Commit notes:
 			- This version is now managed by branching in github rather than tagging 

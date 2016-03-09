@@ -251,33 +251,32 @@ EOM
 }
 
 guessLinuxDist() {
-	lsbBin=`which lsb_release 2>/dev/null`
-	if [ -x "${lsbBin}" ]
-	then
-		dist=`lsb_release -i 2>/dev/null | cut -d':' -f2 | sed -re 's/^\s+//g'`
+	local lsbBin=`which lsb_release 2>/dev/null`
+	local lsbInfo=""
+	if [ -x "${lsbBin}" ]; then
+		lsbInfo=`lsb_release -si 2>/dev/null`
 	fi
 
-	if [ ! -z "`${Echo} ${dist} | grep -i 'ubuntu' | grep -v 'grep'`" ]
-	then
+	if [ ! -z "`${Echo} ${lsbInfo} | grep -i 'ubuntu'`" ]; then
 		dist="ubuntu"
-	elif [ ! -z "`${Echo} ${dist} | grep -i 'suse' | grep -v 'grep'`" ]; then
+	elif [ ! -z "`${Echo} ${lsbInfo} | grep -i 'debian'`" ]; then
+		dist="ubuntu"
+	elif [ ! -z "`${Echo} ${lsbInfo} | grep -i 'suse'`" ]; then
 		dist="sles"
-	elif [ -s "/sbin/yast" ]; then
-		dist="sles"
-	elif [ ! -z "`${Echo} ${dist} | grep -i 'redhat' | grep -v 'grep'`" ]
-	then
+	elif [ ! -z "`${Echo} ${lsbInfo} | grep -i 'redhat'`" ]; then
 		dist="redhat"
-	elif [ -s "/etc/centos-release" ]
-	then
+	elif [ -x "/sbin/yast" ]; then
+		dist="sles"
+	elif `command -v zypperd >/dev/null 2>&1`; then
+		dist="sles"
+	elif [ -s "/etc/centos-release" ]; then
 		dist="centos"
-	elif [ -s "/etc/redhat-release" ]
-	then
+	elif [ -s "/etc/redhat-release" ]; then
 		dist="redhat"
 	else
-		really=$(askYesNo "Distribution" "Can not guess linux distribution, procede assuming debian(ish)?")
+		local really=$(askYesNo "Distribution" "Can not guess linux distribution, procede assuming debian(ish)?")
 
-		if [ "${really}" != "n" ]
-		then
+		if [ "${really}" != "n" ]; then
 			dist="ubuntu"
 		else
 			cleanBadInstall
@@ -304,11 +303,11 @@ setDistCommands() {
 		distRadiusGroup=${ubuntuRadiusGroup}
 		templatePathEduroamDist=${templatePathEduroamUbuntu}
 		distEduroamModules=${UbuntuEduroamModules}
-    ${Echo} "Detected OS as Debian based: ${dist}"
+		${Echo} "Detected OS as Debian based: ${dist}"
 
         elif [ ${dist} = "sles" ]; then
 		redhatDist="none"
-		debianDist=`cat /etc/issue.net | awk -F' ' '{print $2}'  | cut -d. -f1`
+		slesDist=`cat /etc/issue.net | awk -F' ' '{print $3}'  | cut -d. -f1`
                 distCmdU=${slesCmdU}
                 distCmdUa=${slesCmdUa}
                 distCmd1=${slesCmd1}

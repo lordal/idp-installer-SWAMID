@@ -63,4 +63,16 @@ Wherever possible:
 ### It is strongly recommended to backup the file in place with a consistent prefix using the 'fileBkpPostfix' variable prefixed with a dot.  This allows review post installation against what was done and what was in the distribution.
 
 
+## What's the practice around naming files that we carry leverage?
+
+The file naming convention is an evolution and while consistency is desired, it has some inconsistencies.
+If you would like to open a ticket to resolve specific items, please feel free to do so.
+The current practices:
+
+Common extensions
+- *.sh
+- *.template
+
+
+
 

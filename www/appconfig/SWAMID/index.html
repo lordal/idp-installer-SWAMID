@@ -173,7 +173,7 @@
                                               <img id="nonInteractiveInstallationToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" rel="tooltip" title="In non-interactive mode the installer will not ask for any user input or confirmation and will automatically generate all passwords.">
                                             </td>
                                             <td>
-                                              <input id="installer_interactive" type="checkbox" value="y" onclick="updateCtx(this)"/>
+                                              <input id="installer_interactive" type="checkbox" value="n" checked="checked" onclick="updateCtx(this)"/>
                                             </td>
                                           </tr>
                                         </table>
@@ -506,9 +506,9 @@
                   <input  style="width: 250px;" id="ldapurl" type="text" placeholder="" onchange="updateCtx(this)" >
 </td></tr>
 <tr id="ldapDnRow"><td align="right">
-                  LDAP DN
+                  AD uPN domain
 <img id="ldapdnToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
-          rel="tooltip" title="Examples: idptest.domain.se"
+          rel="tooltip" title="This attibute maps to the userPrincipalName in Active Directory. It usually has the format '<sAMAccountName>@<domain>'. Example domain value: idptest.domain.se"
            />
                   :</td><td>
                   <input  style="width: 250px;" id="ldapdn" type="text" placeholder="" onchange="updateCtx(this)" >
@@ -531,7 +531,6 @@
                   <input  style="width: 250px;" id="ldappass" type="text" placeholder="" onchange="updateCtx(this)" >
 </td></tr>
 <tr><td align="right">
-                  
                   LDAP Base DN
                   <img id="ldapserverToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="The Base DN is where the user search is commenced from."
@@ -557,23 +556,24 @@
            :</td><td>
                   <input  style="width: 250px;" id="user_field" type="text" placeholder="e.g. samaccountname" onchange="updateCtx(this)" >
 </td></tr>
-<!--<tr><td align="right">
-                 
+<!--
+<tr><td align="right">
                   LDAP released attributes
                   <img id="ldap_attrToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
           rel="tooltip" title="List of LDAP released attributes"
            />
            :</td><td>
            <input  style="width: 250px;" id="ldap_attr" type="text" placeholder="e.g. cn,mail" onchange="updateCtx(this)" >
-</td></tr>-->
+</td></tr>
+-->
 <input type="hidden" id="ldap_attr" value="" />
 
 <tr><td align="right">
                   LDAP Subtree search?
-<img id="subsearchToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+		<img id="subsearchToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
           rel="tooltip" title="Subtree search describes whether or not the entire tree is searched for a user or just that node and no further.  Subtree is recommended unless your directory design requires otherwise."
            />
-                  :</td><td>
+	   :</td><td>
                   <select id="subsearch"  onchange="updateCtx(this)" >
                     <option name="subsearchTrue" value="true" selected>
                       Yes (recommended)
@@ -585,7 +585,7 @@
 </td></tr>
 <tr><td align="right">
                   Ask for keystore passwords?
-<img id="passw_inputToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
+		  <img id="passw_inputToolTip" src="../img/icon_tooltip.gif" alt="ToolTip"
           rel="tooltip" title="Ask for IDP/HTTPS keystore passwords during installation. If set to No, passwords will be automatically generated."
            />
                   :</td><td>
@@ -698,7 +698,35 @@ Enable Support to sign into Google Apps :</td><td><select id="google"  onchange=
                       </select>
 </td></tr>
 
-                      
+<tr><td align="right">
+Enable SAML2 ECP for non-web SSO 
+                      <img id="ECPToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="ECP(Enhanced Client Proxy) is used for non web SAML flows which includes Microsoft Office365"
+           />:</td><td>
+                      <select id="ECPEnabled"  onchange="updateCtx(this)" >
+                        <option name="ECPEnabledY" value="y" selected>
+                          Yes(recommended)
+                        </option>
+                        <option name="ECPEnabledN" value="n">
+                          No
+                        </option>
+                      </select>
+</td></tr>
+
+<tr><td align="right">
+<select id="iprangesallowedAdjust" onchange="return setiprangesallowed()" style="width: 380px;">
+    <option name="iprangesallowed1" value="127.0.0.1/32 ::1/128" selected>  
+      IP Restrictions to IdP Status Url(Recommended shown) 
+    </option>
+</select>
+      <img id="iprangesallowedToolTip" src="../img/icon_tooltip.gif" alt="ToolTip" 
+          rel="tooltip" title="The IdPs url /idp/status provides application health information. Allowed values are a space separated set of IPv4/v6 CIDR format items where a single ip is 1.1.1.1/32 or ::1/128(ipv6 format). Recommended values are to permit localhost by ipv4/6 addresses"
+           />
+     :</td><td>
+                  <input  style="width: 550px;" id="iprangesallowed" type="text" placeholder="" onchange="updateCtx(this)" 
+                  value="127.0.0.1/32 ::1/128">
+</td></tr>
+
 <tr bgcolor="#CCCCCC"><td colspan="2"><b><font size="+1">Static data</font><b></td></tr>
                                             <tr><td colspan="2">
 Enter static data for organisation information<br />
@@ -709,7 +737,6 @@ norEduOrgAcronym :</td><td><input style="width: 250px;" id="certAcro" type="text
 </td></tr>
 <tr><td align="right">
 Country descriptor :</td><td><input style="width: 250px;" id="certLongC" type="text" value="Sweden" onchange="updateCtx(this)" />
-</td></tr>
 
                   <!-- 
 <tr>
@@ -812,7 +839,6 @@ installer_section2_title:
 <script type="text/javascript">
 $("#ida_component_shibboleth").prop("checked", true);
 $("#installer_section0_buildComponentList").val("shibboleth");
-//requiredFieldKeysShibboleth[] = 1;
 update();
 </script>
 

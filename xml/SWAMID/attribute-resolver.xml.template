@@ -242,6 +242,18 @@
 		<resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.11" friendlyName="eduPersonAssurance" />
 	</resolver:AttributeDefinition>
 
+	<resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonUniqueId" sourceAttributeID="eduPersonUniqueId">
+		<resolver:Dependency ref="myLDAP" />
+		<resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:eduPersonUniqueId" />
+		<resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.13" friendlyName="eduPersonUniqueId" />
+	</resolver:AttributeDefinition>
+
+	<resolver:AttributeDefinition xsi:type="ad:Simple" id="eduPersonOrcid" sourceAttributeID="eduPersonOrcid">
+		<resolver:Dependency ref="myLDAP" />
+		<resolver:AttributeEncoder xsi:type="enc:SAML1String" name="urn:mace:dir:attribute-def:eduPersonOrcid" />
+		<resolver:AttributeEncoder xsi:type="enc:SAML2String" name="urn:oid:1.3.6.1.4.1.5923.1.1.1.16" friendlyName="eduPersonOrcid" />
+	</resolver:AttributeDefinition>
+
 <!-- Idp-Installer: the source for this attribute is from the database StoredId and no longer the classic computedID  -->
     <resolver:AttributeDefinition xsi:type="ad:SAML2NameID" id="eduPersonTargetedID" 
                                   nameIdFormat="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" sourceAttributeID="persistentId">
@@ -457,7 +469,8 @@
 			- urn:schac:homeOrganizationType:int:NRENAffiliate
 			- urn:schac:homeOrganizationType:int:other
 -->
-    </Attribute>	</resolver:DataConnector>
+		</Attribute>
+	</resolver:DataConnector>
 
     <!-- Computed targeted ID connector -->
     <!--

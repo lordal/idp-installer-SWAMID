@@ -23,33 +23,37 @@ Supported Platforms
 -------------------------------------------------------------------------------
 
 This installer script is intended to be used on a clean install of:
- - Ubuntu Server 14.04   (SWAMID only)
- - CentOS 7 'minimal'  (SWAMID or CAF only)
+ - Ubuntu Server 14.04   (SWAMID, CAF)
+ - CentOS 7 'minimal'    (SWAMID, CAF)
+ - RedHat EL7.2 'minimal' (CAF only)
 
 It *MAY* run on pre-existing installations of these OS', but steps in the installer
 presume the installed services are 'alone' on the machine and may modify your
 existing host settings.
 
 
-
 Configuration
 -------------------------------------------------------------------------------
 
-This script requires a configuration file to run. The configuration file is
-generated using a local HTML based configuration builder to construct it.
-This technique helps avoid storing sensitive data like passwords anywhere.
+This script requires a configuration file to run. 
+The configuration file is generated using a local HTML based configuration builder
+to construct it. This technique purposely avoids storing sensitive data
+anywhere other than where you create the configuration and where you place the config file.
 
-Configuration builders are federation specific and can be launched from:
+The configuration builder pages are federation specific.
+To Launch them, download this distribution, unzip it locally and use Chrome of Firefox to
+open the respective configuration page:
 
-for CAF - ~/www/appconfig/CAF/index.html
+for CAF    - ~/www/appconfig/CAF/index.html
 for SWAMID - ~/www/appconfig/SWAMID/index.html
+
 
 The configuration builder uses javascript to perform basic validation and
 has the ability to import existing configuration files avoiding retyping
 information.
 
 For best configuration builder experience, we strongly recommend using Firefox
-or Google Chrome. Using IE for the configuration builder is discouraged.
+or Google Chrome. Using IE for the configuration builder is discouraged and not supported.
 
 
 General Installation Steps
@@ -93,7 +97,7 @@ Profile of installed software
 -------------------------------------------------------------------------------
 SAML2 Uses:
       jetty-9.2.14
-      shibboleth-identityprovider-3.2.0
+      shibboleth-identityprovider-3.2.1
       cas-client-3.3.3-release
       mysql-connector-java-5.1.35 (for EPTID)
       mysql DB 5.6 Community Release
@@ -127,3 +131,5 @@ Contributors
 -------------------------------------------------------------------------------
  Anders Lördal, SWAMID
  Chris Phillips, CANARIE
+ Cybera.ca
+ 
