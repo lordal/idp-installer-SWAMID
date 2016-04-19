@@ -138,9 +138,6 @@
 	<AttributeRule attributeID="displayName">
 		<PermitValueRule xsi:type="ANY" />
 	</AttributeRule>
-	<AttributeRule attributeID="commonName">
-		<PermitValueRule xsi:type="ANY" />
-	</AttributeRule>
 	<AttributeRule attributeID="eduPersonPrincipalName">
 		<PermitValueRule xsi:type="ANY" />
 	</AttributeRule>
