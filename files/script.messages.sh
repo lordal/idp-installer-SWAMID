@@ -28,10 +28,10 @@ commonsPool2Ver="2.4.2"
 
 # uncomment if you want an older jetty version: jettyVer="9.2.13.v20150730"
 
-javaBuildName="8u65-b17"
-javaName="8u65"
+javaBuildName="8u73-b02"
+javaName="8u73"
 javaMajorVersion="8"
-javaVer="1.8.0_65"
+javaVer="1.8.0_73"
 jcePolicySrc="jce_policy-8.zip"
 JCEUnlimitedResponse="2147483647"
 
