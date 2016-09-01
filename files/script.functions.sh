@@ -1877,6 +1877,21 @@ ${Echo} "Applying NameID settings:${tgtFilexml}: perform our overlay from templa
 
 	cat ${samlnameidTemplate} | sed -re "s#SqLpAsSwOrD#${epass}#" > "${tgtFilexml}"
 
+###############################################
+# BEGIN Configure the Google domain placeholder
+###############################################
+
+if [ "${google}" != "n" ]; then
+    # The placeholder string to search for
+    repStrGoogleResolver='<!-- PLACEHOLDER FOR GOOGLE APPS DO NOT REMOVE -->'
+
+    # Add the saml-nameid google config at the placeholder
+    sed -i -e "/^${repStrGoogleResolver}$/r ${Spath}/xml/${my_ctl_federation}/google-saml-nameid.add" -e "/^${repStrGoogleResolver}$/d" "${tgtFilexml}"    
+fi
+#############################################
+# END Configure the Google domain placeholder
+#############################################
+
 ${Echo} "Applying NameID settings:${tgtFilexml}: verify successfull update" >> ${statusFile} 2>&1
 
 # verify that the updates proceeded at least to a non zero byte file result
@@ -2073,6 +2088,24 @@ patchShibbolethConfigs ()
 		sed -i "${googleMetaLine}i <MetadataProvider id=\"GoogleMD\" xsi:type=\"FilesystemMetadataProvider\" metadataFile=\"/opt/shibboleth-idp/metadata/google.xml\" />" /opt/shibboleth-idp/conf/metadata-providers.xml
 
                 cat ${Spath}/xml/${my_ctl_federation}/google.xml | sed -re "s/GoOgLeDoMaIn/${googleDom}/" > /opt/shibboleth-idp/metadata/google.xml
+		
+		###############################################
+		# BEGIN Configure the Google domain placeholder
+		###############################################
+		
+		# The placeholder string to search for
+		repStrGoogleResolver='<!-- PLACEHOLDER FOR GOOGLE APPS DO NOT REMOVE -->'		
+
+		# Add the resolver google config at the placeholder
+		sed -i -e "/^${repStrGoogleResolver}$/r ${Spath}/xml/${my_ctl_federation}/google-resolver.add" -e "/^${repStrGoogleResolver}$/d" /opt/shibboleth-idp/conf/attribute-resolver.xml
+		
+		# Set the google domain in the resolver file
+		sed -i -e "s/GoOgLeDoMaIn/${googleDom}/g" /opt/shibboleth-idp/conf/attribute-resolver.xml
+		#############################################
+		# END Configure the Google domain placeholder
+		#############################################
+
+
         fi
 
 
