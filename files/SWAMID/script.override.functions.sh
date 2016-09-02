@@ -35,6 +35,8 @@ installCertificates () {
 	${Echo} "Fetching certificate chain from web"
 	if [ "${SWAMIDcertChain}" = "tcs" ]; then
 		${fetchCmd} ${certpath}/server.chain ${certificateChain}
+	elif [ "${SWAMIDcertChain}" = "digilow" ]; then
+		${fetchCmd} ${certpath}/server.chain ${digicertChainLow}
 	else
 		${fetchCmd} ${certpath}/server.chain ${digicertChain}
 	fi

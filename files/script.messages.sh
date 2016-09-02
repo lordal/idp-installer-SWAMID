@@ -109,6 +109,7 @@ idpEditWebappLibDir="${idpEditWebappDir}/WEB-INF/lib/"
 esalt=`openssl rand -base64 36 |tr -d '/\\+' 2>/dev/null`
 certificateChain="https://webkonto.student.hig.se/chain.pem"
 digicertChain="https://webkonto.student.hig.se/digichain.pem"
+digicertChainLow="https://webkonto.student.hig.se/digilow.pem"
 jettyDepend="https://build.shibboleth.net/nexus/content/repositories/releases/net/shibboleth/utilities/jetty9/jetty9-dta-ssl/1.0.0/jetty9-dta-ssl-1.0.0.jar"
 dist=""
 distCmdU=""

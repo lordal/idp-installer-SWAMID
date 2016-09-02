@@ -369,7 +369,8 @@
                                              </select>
                                              </td></tr>
 <tr><td align="right">Certificate chain:</td><td><select id="SWAMIDcertChain"  onchange="updateCtx(this)">
-                                                <option name="SWAMIDcertChainDigicert" value="digicert" selected="selected">Digicert</option>
+                                                <option name="SWAMIDcertChainDigicert" value="digicert" selected="selected">Digicert High Assurance (EV)</option>
+                                                <option name="SWAMIDcertChainDigicert" value="digicert">Digicert OV</option>
                                                 <option name="SWAMIDcertChainTCS" value="tcs">TCS(The old chain)</option>
                                              </select>
                                              </td></tr>
@@ -465,7 +466,7 @@
           rel="tooltip" title="This must be hostname(s) and not IP address(es). Hostnames are required as SSL connections will compare the certificate offered against that of the configured host and will fail silently to the end user if not correctly configured. Separate multiple servers with space."
            />
                   :</td><td>
-                  <input  style="width: 250px;" id="ldapserver" type="text" placeholder="e.g. ldap.hig.se ldap2.hig.se" onchange="if(this.value.indexOf(':')>-1){alert(errorNotValidHostname);}else{update();}updateCtx(this)" >
+                  <input  style="width: 250px;" id="ldapserver" type="text" placeholder="e.g. ldap.domain.se ldap2.domain.se" onchange="if(this.value.indexOf(':')>-1){alert(errorNotValidHostname);}else{update();}updateCtx(this)" >
 </td></tr>
 <tr><td align="right" >
                   LDAP Connection Encryption technique
