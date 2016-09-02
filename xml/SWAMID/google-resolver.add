@@ -1,0 +1,11 @@
+        <!-- BEGIN google attributes -->
+	<!-- Google want want the nameid format to be urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress
+	They want the nameID to be the email without the organisation postfix
+	For victor.naslund@smhi.se it should simply be victor.naslund
+	This attribute can be found in AD by using the mail attribute and removing the @org.se postfix like below -->
+        <resolver:AttributeDefinition id="GooglePrincipal" xsi:type="ad:RegexSplit"
+                                      sourceAttributeID="mail" regex="(.+)@GoOgLeDoMaIn" >
+          <resolver:Dependency ref="myLDAP" />
+          <resolver:AttributeEncoder xsi:type="enc:SAML2StringNameID" encodeType="false" />
+        </resolver:AttributeDefinition>
+        <!-- END google attributes -->

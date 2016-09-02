@@ -387,6 +387,9 @@
 	</resolver:AttributeDefinition>
 
 
+<!-- PLACEHOLDER FOR GOOGLE APPS DO NOT REMOVE -->
+
+
 	<!-- Country name -->
 	<resolver:AttributeDefinition id="friendlyCountryName" xsi:type="Simple"
 					xmlns="urn:mace:shibboleth:2.0:resolver:ad" sourceAttributeID="co">

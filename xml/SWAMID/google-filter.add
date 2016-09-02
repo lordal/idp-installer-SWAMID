@@ -1,18 +1,9 @@
 <!-- Google -->
 <AttributeFilterPolicy id="google">
 	<PolicyRequirementRule xsi:type="Requester" value="google.com" />
-	<AttributeRule attributeID="NameID">
+	<AttributeRule attributeID="GooglePrincipal">
 		<PermitValueRule xsi:type="ANY" />
-	</AttributeRule>
- 
-	<AttributeRule attributeID="principal">
-		<PermitValueRule xsi:type="ANY" />
-	</AttributeRule>
- 
-	<AttributeRule attributeID="commonName">
-		<PermitValueRule xsi:type="ANY" />
-	</AttributeRule>
- 
+	</AttributeRule> 
 </AttributeFilterPolicy>
 
 

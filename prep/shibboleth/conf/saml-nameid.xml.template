@@ -37,6 +37,8 @@
         
         <!-- IdP-Installer has uncommented this to go along with the database bean below -->
 
+<!-- PLACEHOLDER FOR GOOGLE APPS DO NOT REMOVE -->
+
         <ref bean="shibboleth.SAML2PersistentGenerator" />
 
         <!--

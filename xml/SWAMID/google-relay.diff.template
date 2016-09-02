@@ -3,6 +3,7 @@
                 <list>
                     <bean parent="SAML2.SSO" p:encryptAssertions="false" />
                     <bean parent="SAML2.SSO" p:encryptNameIDs="false" />
+                    <bean parent="SAML2.SSO" p:nameIDFormatPrecedence="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress" />
                 </list>
             </property>
         </bean>
