@@ -186,8 +186,11 @@ main() {
 		local entID=""
 
 		princ=$(askString "Enter principal" "Please enter your principal, ie. username." "" "1")
-		if [[ -s "${idpBaseDir}/conf/attribute-filter.xml" ]]; then
-			ids="`cat ${idpBaseDir}/conf/attribute-filter.xml | awk 'in_comment&&/-->/{sub(/([^-]|-[^-])*--+>/,\"\");in_comment=0} in_comment{next} {gsub(/<!--+([^-]|-[^-])*--+>/,\"\"); in_comment=sub(/<!--+.*/,\"\"); print}' | grep 'xsi:type=\"Requester\"' | awk -F'value=' '{ print $2 }' | cut -d\\\" -f2`"
+		if [[ -s "${idpBaseDir}/conf/services.xml" ]]; then
+			ids=""
+			for i in `sed -ne '/<util:list id ="shibboleth.AttributeFilterResources">/,/<\/util:list>/p' ${idpBaseDir}/conf/services.xml | grep value | awk '{print $(NF-2)}' FS='[><]' | sed "s&\%{idp.home}&${idpBaseDir}&g"`; do
+				ids="${ids} `cat ${i} | awk 'in_comment&&/-->/{sub(/([^-]|-[^-])*--+>/,\"\");in_comment=0} in_comment{next} {gsub(/<!--+([^-]|-[^-])*--+>/,\"\"); in_comment=sub(/<!--+.*/,\"\"); print}' | grep 'xsi:type=\"Requester\"' | awk -F'value=' '{ print $2 }' | cut -d\\\" -f2`"
+			done
 		fi
 		local idList=$(
 			for i in ${ids}; do
