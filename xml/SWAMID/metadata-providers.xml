@@ -75,10 +75,10 @@
      -->
 
 	<MetadataProvider id="URLMD" xsi:type="FileBackedHTTPMetadataProvider" xmlns="urn:mace:shibboleth:2.0:metadata"
-			metadataURL="http://md.swamid.se/md/swamid-2.0.xml"
+			metadataURL="http://mds.swamid.se/md/swamid-2.0.xml"
 			backingFile="/opt/shibboleth-idp/metadata/swamid-2.0.xml">
 		<MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true"
-				certificateFile="%{idp.home}/credentials/md-signer.crt" />
+				certificateFile="%{idp.home}/credentials/md-signer2.crt" />
 		<MetadataFilter xsi:type="EntityRoleWhiteList">
 			<RetainedRole>md:SPSSODescriptor</RetainedRole>
 		</MetadataFilter>

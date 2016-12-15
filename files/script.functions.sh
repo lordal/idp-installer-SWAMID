@@ -1332,16 +1332,16 @@ configShibbolethFederationValidationKey ()
 
 {
 
-	${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signer.crt
-	cFinger=`openssl x509 -noout -fingerprint -sha1 -in ${idpPath}/credentials/md-signer.crt | cut -d\= -f2`
+	${fetchCmd} ${idpPath}/credentials/md-signer2.crt http://mds.swamid.se/md/md-signer2.crt
+	cFinger=`openssl x509 -noout -fingerprint -sha256 -in ${idpPath}/credentials/md-signer2.crt | cut -d\= -f2`
 	cCnt=1
 	while [ "${cFinger}" != "${mdSignerFinger}" -a "${cCnt}" -le 10 ]; do
-		${fetchCmd} ${idpPath}/credentials/md-signer.crt http://md.swamid.se/md/md-signer.crt
-		cFinger=`openssl x509 -noout -fingerprint -sha1 -in ${idpPath}/credentials/md-signer.crt | cut -d\= -f2`
+		${fetchCmd} ${idpPath}/credentials/md-signer2.crt http://mds.swamid.se/md/md-signer2.crt
+		cFinger=`openssl x509 -noout -fingerprint -sha256 -in ${idpPath}/credentials/md-signer2.crt | cut -d\= -f2`
 		cCnt=`expr ${cCnt} + 1`
 	done
 	if [ "${cFinger}" != "${mdSignerFinger}" ]; then
-		 ${Echo} "Fingerprint error on md-signer.crt!\nGet ther certificate from http://md.swamid.se/md/md-signer.crt and verify it, then place it in the file: ${idpPath}/credentials/md-signer.crt" >> ${messages}
+		 ${Echo} "Fingerprint error on md-signer2.crt!\nGet ther certificate from http://mds.swamid.se/md/md-signer2.crt and verify it, then place it in the file: ${idpPath}/credentials/md-signer2.crt" >> ${messages}
 	fi
 
 }
