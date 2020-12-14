@@ -32,7 +32,7 @@ readonly Echo=$(setEcho)
 getHostPort() {
 	local hostPort=""
 	if [[ -s "/opt/jetty/jetty-base/start.d/idp.ini" ]]; then
-		hostPort="`grep \"^jetty.https.port=\" /opt/jetty/jetty-base/start.d/idp.ini | cut -d= -f2-`"
+		hostPort="`grep \"^jetty.ssl.port=\" /opt/jetty/jetty-base/start.d/idp.ini | cut -d= -f2-`"
 
 		if [[ -z "${hostPort}" ]]; then
 			${Echo} "Couldn't get a port from the configuration and can't continue.\nPlease script help."
